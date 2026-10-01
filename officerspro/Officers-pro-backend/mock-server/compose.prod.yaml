@@ -1,0 +1,11 @@
+﻿services:
+  mock-server:
+    image: officer-pro/mock-server:local
+    restart: unless-stopped
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: "3000"
+
+

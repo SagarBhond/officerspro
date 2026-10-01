@@ -1,0 +1,28 @@
+server:
+  port: 8888
+spring:
+  application:
+    name: config-server
+  cloud:
+    config:
+      server:
+          git:
+            uri: ${GIT_REPO_URI:file:///officerspro-config-server-git_repo}
+          clone-on-start: true
+          default-label: main
+logging:
+  level:
+    org:
+      springframework:
+        cloud:
+          config:
+            server: DEBUG
+      eclipse:
+        jgit: DEBUG
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true

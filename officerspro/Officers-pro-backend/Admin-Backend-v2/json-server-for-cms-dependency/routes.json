@@ -1,0 +1,10 @@
+{
+  "/api/admin/cases/total": "/cases/total",
+  "/api/admin/cases/active": "/cases/active",
+  "/api/admin/cases/completed": "/cases/completed",
+  "/api/admin/cases/statements": "/cases/statements",
+  "/api/victim/total-officers": "/officers/total",
+  "/api/subscriptions/public/status/getAllSubscription/:email": "/subscriptions",
+  "/status/getAllSubscription/:email": "/subscriptions",
+  "/api/payment-history/admin/all": "/paymentHistory"
+}

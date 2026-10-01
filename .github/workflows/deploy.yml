@@ -1,0 +1,73 @@
+name: Build and deploy OfficersPro
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "officerspro/Officers-pro-backend/officers-pro/**"
+      - "officerspro/infra/terraform/**"
+      - "officerspro/infra/database/**"
+      - "officerspro/scripts/**"
+      - ".github/workflows/deploy.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: officerspro-production
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out application and submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          token: ${{ secrets.SUBMODULES_READ_TOKEN || github.token }}
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+
+      - name: Test backend
+        working-directory: officerspro/Officers-pro-backend/officers-pro/officers-pro-backend
+        run: mvn --batch-mode --no-transfer-progress test
+
+      - name: Configure AWS credentials using GitHub OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION || 'ap-south-1' }}
+
+      - name: Log in to Amazon ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and publish backend image
+        uses: docker/build-push-action@v6
+        with:
+          context: officerspro/Officers-pro-backend/officers-pro/officers-pro-backend
+          file: officerspro/Officers-pro-backend/officers-pro/officers-pro-backend/dockerfile
+          push: true
+          tags: |
+            ${{ steps.ecr-login.outputs.registry }}/officerspro/backend:${{ github.sha }}
+            ${{ steps.ecr-login.outputs.registry }}/officerspro/backend:latest
+
+      - name: Deploy backend to ECS
+        env:
+          AWS_REGION: ${{ vars.AWS_REGION || 'ap-south-1' }}
+          ECS_CLUSTER: ${{ vars.ECS_CLUSTER || 'officerspro' }}
+        run: |
+          set -euo pipefail
+          aws ecs update-service \
+            --region "$AWS_REGION" \
+            --cluster "$ECS_CLUSTER" \
+            --service officerspro-backend \
+            --force-new-deployment

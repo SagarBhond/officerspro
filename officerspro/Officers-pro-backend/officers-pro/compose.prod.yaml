@@ -1,0 +1,57 @@
+﻿services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: ${DB_NAME:-officerspro}
+      MYSQL_USER: ${DB_USERNAME:-officerspro}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-localroot}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-localroot}
+    volumes:
+      - officers-pro-mysql-data:/var/lib/mysql
+      - ./database/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping --host=127.0.0.1 --user=root --password=\"$${MYSQL_ROOT_PASSWORD}\" --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    restart: unless-stopped
+
+  backend:
+    image: officer-pro/main-backend:local
+    restart: unless-stopped
+    build:
+      context: ./officers-pro-backend
+    environment:
+      SERVER_PORT: "8082"
+      DB_HOST: mysql
+      DB_PORT: "3306"
+      DB_NAME: ${DB_NAME:-officerspro}
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME:-officerspro}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-localroot}
+      AES_ENCRYPTION_KEY: ${AES_ENCRYPTION_KEY:?Set AES_ENCRYPTION_KEY in .env}
+      KEYCLOAK_ISSUER_URI: ${KEYCLOAK_ISSUER_URI:?Set KEYCLOAK_ISSUER_URI in .env}
+      KEYCLOAK_SERVER_URL: ${KEYCLOAK_SERVER_URL:?Set KEYCLOAK_SERVER_URL in .env}
+      KEYCLOAK_CLIENT_SECRET: ${KEYCLOAK_CLIENT_SECRET:?Set KEYCLOAK_CLIENT_SECRET in .env}
+      KEYCLOAK_REALM: ${KEYCLOAK_REALM:-officers-pro}
+      AWS_REGION: ${AWS_REGION:-ap-south-1}
+      AWS_S3_BUCKET: ${AWS_S3_BUCKET:?Set AWS_S3_BUCKET in .env}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+      AWS_SESSION_TOKEN: ${AWS_SESSION_TOKEN:-}
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "${BACKEND_PORT:-8082}:8082"
+
+  frontend:
+    image: officer-pro/main-frontend:local
+    restart: unless-stopped
+    build:
+      context: ./officers-pro-front-end
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
+
+volumes:
+  officers-pro-mysql-data:

@@ -1,0 +1,52 @@
+services:
+  investigation-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8083:8080"
+    environment:
+      SERVER_PORT: "8080"
+      SPRING_CONFIG_IMPORT: "optional:configserver:http://host.docker.internal:8888"
+      SPRING_CLOUD_CONFIG_FAIL_FAST: "false"
+      EUREKA_CLIENT_ENABLED: "false"
+      EUREKA_CLIENT_REGISTER_WITH_EUREKA: "false"
+      EUREKA_CLIENT_FETCH_REGISTRY: "false"
+      SPRING_DATASOURCE_URL: "jdbc:mysql://db:3306/officerspro?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC"
+      SPRING_DATASOURCE_USERNAME: officerspro
+      SPRING_DATASOURCE_PASSWORD: "${SPRING_DATASOURCE_PASSWORD:?Set SPRING_DATASOURCE_PASSWORD}"
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      DOCUMENT_SERVICE_URL: "http://host.docker.internal:8085"
+      SERVICES_FERRIST_URL: "http://host.docker.internal:8087/ferrist"
+      PROFILE_SERVICE_URL: "http://host.docker.internal:8084"
+      COMPLAINT_FIR_SERVICE_URL: "http://host.docker.internal:8087"
+      AUDIT_SERVICE_URL: "http://host.docker.internal:8086"
+    volumes:
+      - investigation-uploads:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: officerspro
+      MYSQL_USER: officerspro
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD:?Set MYSQL_PASSWORD}"
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD}"
+    ports:
+      - "3389:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 15s
+    restart: unless-stopped
+
+volumes:
+  mysql-data:
+  investigation-uploads:

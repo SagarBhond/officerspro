@@ -1,0 +1,59 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: investigationandcasediaryservice
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/investigationservice?createDatabaseIfNotExist=true
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: false
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+      file-size-threshold: 2KB
+
+logging:
+  level:
+    com.configserver.officerspro.investigationandcasediaryservice: DEBUG
+    org.springframework.web.client.RestTemplate: DEBUG
+
+app:
+  upload:
+    dir: uploads/evidence/
+
+complaint:
+  service:
+    url: http://localhost:8082/api
+
+document:
+  service:
+    url: http://localhost:8085
+
+audit:
+  service:
+    url: http://localhost:8089
+
+profile:
+  service:
+    url: http://localhost:8084
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/

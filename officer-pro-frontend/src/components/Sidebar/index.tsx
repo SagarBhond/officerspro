@@ -1,0 +1,1276 @@
+import React, { useEffect, useRef, useState } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
+import SidebarLinkGroup from './SidebarLinkGroup';
+import Logo from '../../images/logo/maharashtra-removebg-preview.png';
+import { useTranslation } from 'react-i18next';
+import { AiFillDollarCircle } from 'react-icons/ai';
+
+interface SidebarProps {
+  sidebarOpen: boolean;
+  setSidebarOpen: (arg: boolean) => void;
+}
+
+const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
+  const location = useLocation();
+  const { pathname } = location;
+
+  const trigger = useRef<any>(null);
+  const sidebar = useRef<any>(null);
+
+  const storedSidebarExpanded = localStorage.getItem('sidebar-expanded');
+  const [sidebarExpanded, setSidebarExpanded] = useState(
+    storedSidebarExpanded === null ? false : storedSidebarExpanded === 'true',
+  );
+
+  const { t } = useTranslation();
+
+  // Sidebar item translation keys
+  const menu = t('sidebar.menu');
+  const dashboard = t('sidebar.dashboard');
+  const registerstatement = t('sidebar.registerstatement');
+  const caseelement = t('sidebar.caseelement');
+  const viewevidence = t('sidebar.viewevidence');
+  const casewitness = t('sidebar.casewitness');
+  const casevictim = t('sidebar.casevictim');
+  const caseoffender = t('sidebar.caseoffender');
+  const allstatement = t('sidebar.allstatement');
+  const registeredcase = t('sidebar.registeredcase');
+  const courtcases = t('sidebar.courtcases');
+  const viewallcases = t('sidebar.viewallcases');
+  const casediary = t('sidebar.casediary');
+  const ferrist = t('sidebar.ferrist');
+  const feedback = t('sidebar.feedback');
+  const subcription = t('sidebar.subscription');
+  const helpsupport = t('sidebar.helpsupport');
+
+  // close on click outside
+  useEffect(() => {
+    const clickHandler = ({ target }: MouseEvent) => {
+      if (!sidebar.current || !trigger.current) return;
+      if (
+        !sidebarOpen ||
+        sidebar.current.contains(target) ||
+        trigger.current.contains(target)
+      )
+        return;
+      setSidebarOpen(false);
+    };
+    document.addEventListener('click', clickHandler);
+    return () => document.removeEventListener('click', clickHandler);
+  });
+
+  // close if the esc key is pressed
+  useEffect(() => {
+    const keyHandler = ({ keyCode }: KeyboardEvent) => {
+      if (!sidebarOpen || keyCode !== 27) return;
+      setSidebarOpen(false);
+    };
+    document.addEventListener('keydown', keyHandler);
+    return () => document.removeEventListener('keydown', keyHandler);
+  });
+
+  useEffect(() => {
+    localStorage.setItem('sidebar-expanded', sidebarExpanded.toString());
+    if (sidebarExpanded) {
+      document.querySelector('body')?.classList.add('sidebar-expanded');
+    } else {
+      document.querySelector('body')?.classList.remove('sidebar-expanded');
+    }
+  }, [sidebarExpanded]);
+
+  return (
+    <aside
+      ref={sidebar}
+      className={`absolute left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-y-hidden bg-federalblue duration-300 ease-linear dark:bg-boxdark lg:static lg:translate-x-0 ${
+        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+      }`}
+    >
+      {/* <!-- SIDEBAR HEADER --> */}
+      <div className="flex items-center justify-between gap-2 px-6">
+        <NavLink to="/">
+          <img src={Logo} alt="Logo" />
+        </NavLink>
+
+        <button
+          ref={trigger}
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          aria-controls="sidebar"
+          aria-expanded={sidebarOpen}
+          className="block lg:hidden"
+        >
+          <svg
+            className="fill-current"
+            width="20"
+            height="18"
+            viewBox="0 0 20 18"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M19 8.175H2.98748L9.36248 1.6875C9.69998 1.35 9.69998 0.825 9.36248 0.4875C9.02498 0.15 8.49998 0.15 8.16248 0.4875L0.399976 8.3625C0.0624756 8.7 0.0624756 9.225 0.399976 9.5625L8.16248 17.4375C8.31248 17.5875 8.53748 17.7 8.76248 17.7C8.98748 17.7 9.17498 17.625 9.36248 17.475C9.69998 17.1375 9.69998 16.6125 9.36248 16.275L3.02498 9.8625H19C19.45 9.8625 19.825 9.4875 19.825 9.0375C19.825 8.55 19.45 8.175 19 8.175Z"
+              fill=""
+            />
+          </svg>
+        </button>
+      </div>
+      {/* <!-- SIDEBAR HEADER --> */}
+
+      <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
+        {/* <!-- Sidebar Menu --> */}
+        <nav className="py-4 px-4 lg:px-6">
+          {/* <!-- Menu Group --> */}
+          <div>
+            <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2">
+              {menu}
+            </h3>
+
+            <ul className="mb-6 flex flex-col gap-1.5">
+              {/* <!-- Menu Item Dashboard --> */}
+
+              <li>
+                <NavLink
+                  to="/"
+                  className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-honolulublue dark:hover:bg-meta-4 ${
+                    (pathname === '/' || pathname.includes('dashboard')) &&
+                    'bg-honolulublue dark:bg-meta-4'
+                  }`}
+                >
+                  <svg
+                    className="fill-current"
+                    width="22"
+                    height="22"
+                    viewBox="0 0 18 18"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M6.10322 0.956299H2.53135C1.5751 0.956299 0.787598 1.7438 0.787598 2.70005V6.27192C0.787598 7.22817 1.5751 8.01567 2.53135 8.01567H6.10322C7.05947 8.01567 7.84697 7.22817 7.84697 6.27192V2.72817C7.8751 1.7438 7.0876 0.956299 6.10322 0.956299ZM6.60947 6.30005C6.60947 6.5813 6.38447 6.8063 6.10322 6.8063H2.53135C2.2501 6.8063 2.0251 6.5813 2.0251 6.30005V2.72817C2.0251 2.44692 2.2501 2.22192 2.53135 2.22192H6.10322C6.38447 2.22192 6.60947 2.44692 6.60947 2.72817V6.30005Z"
+                      fill=""
+                    />
+                    <path
+                      d="M15.4689 0.956299H11.8971C10.9408 0.956299 10.1533 1.7438 10.1533 2.70005V6.27192C10.1533 7.22817 10.9408 8.01567 11.8971 8.01567H15.4689C16.4252 8.01567 17.2127 7.22817 17.2127 6.27192V2.72817C17.2127 1.7438 16.4252 0.956299 15.4689 0.956299ZM15.9752 6.30005C15.9752 6.5813 15.7502 6.8063 15.4689 6.8063H11.8971C11.6158 6.8063 11.3908 6.5813 11.3908 6.30005V2.72817C11.3908 2.44692 11.6158 2.22192 11.8971 2.22192H15.4689C15.7502 2.22192 15.9752 2.44692 15.9752 2.72817V6.30005Z"
+                      fill=""
+                    />
+                    <path
+                      d="M6.10322 9.92822H2.53135C1.5751 9.92822 0.787598 10.7157 0.787598 11.672V15.2438C0.787598 16.2001 1.5751 16.9876 2.53135 16.9876H6.10322C7.05947 16.9876 7.84697 16.2001 7.84697 15.2438V11.7001C7.8751 10.7157 7.0876 9.92822 6.10322 9.92822ZM6.60947 15.272C6.60947 15.5532 6.38447 15.7782 6.10322 15.7782H2.53135C2.2501 15.7782 2.0251 15.5532 2.0251 15.272V11.7001C2.0251 11.4188 2.2501 11.1938 2.53135 11.1938H6.10322C6.38447 11.1938 6.60947 11.4188 6.60947 11.7001V15.272Z"
+                      fill=""
+                    />
+                    <path
+                      d="M15.4689 9.92822H11.8971C10.9408 9.92822 10.1533 10.7157 10.1533 11.672V15.2438C10.1533 16.2001 10.9408 16.9876 11.8971 16.9876H15.4689C16.4252 16.9876 17.2127 16.2001 17.2127 15.2438V11.7001C17.2127 10.7157 16.4252 9.92822 15.4689 9.92822ZM15.9752 15.272C15.9752 15.5532 15.7502 15.7782 15.4689 15.7782H11.8971C11.6158 15.7782 11.3908 15.5532 11.3908 15.272V11.7001C11.3908 11.4188 11.6158 11.1938 11.8971 11.1938H15.4689C15.7502 11.1938 15.9752 11.4188 15.9752 11.7001V15.272Z"
+                      fill=""
+                    />
+                  </svg>
+                  {dashboard}
+                </NavLink>
+              </li>
+
+              <li>
+                <NavLink
+                  to="/court-cases"
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-honolulublue dark:hover:bg-meta-4 ${
+                    pathname.includes('court-cases') &&
+                    'bg-honolulublue dark:bg-meta-4'
+                  }`}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="22"
+                    height="22"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    className="fill-current"
+                  >
+                    <path
+                      d="M4 7.5C4 6.11929 5.11929 5 6.5 5H17.5C18.8807 5 20 6.11929 20 7.5V17.5C20 18.8807 18.8807 20 17.5 20H6.5C5.11929 20 4 18.8807 4 17.5V7.5Z"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M9 3V5"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M15 3V5"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M4 9H20"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <rect
+                      x="7.5"
+                      y="12"
+                      width="3"
+                      height="3"
+                      rx="0.5"
+                      stroke="currentColor"
+                      strokeWidth="1.2"
+                    />
+                    <path
+                      d="M13 12H17"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M13 15H16"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  {courtcases}
+                </NavLink>
+              </li>
+
+              {/* <!-- Menu Item Dashboard --> */}
+              <li>
+                <NavLink
+                  to="/Registerstatement"
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-honolulublue dark:hover:bg-meta-4 ${
+                    pathname.includes('Registerstatement') &&
+                    'bg-honolulublue dark:bg-meta-4'
+                  }`}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="22"
+                    height="22"
+                    enableBackground="new 0 0 512 512"
+                    viewBox="0 0 512 512"
+                  >
+                    <g
+                      fill="none"
+                      stroke="#fff"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeMiterlimit="10"
+                      strokeWidth="15"
+                    >
+                      <path
+                        d="M174.781 190.871a3.23 3.23 0 014.891 0c7.299 8.402 17.857 13.711 29.895 13.711a39.875 39.875 0 0022.193-6.701 3.21 3.21 0 013.993.326l18.357 17.388a2.878 2.878 0 01.336 3.798l-11.322 15.33c-6.109 8.267-6.14 19.544-.082 27.854l8.369 11.476c15.929 21.843 8.861 52.734-14.993 65.458-12.723 6.787-47.336 23.789-56.782 28.419a5.468 5.468 0 01-4.819 0c-9.446-4.63-44.059-21.632-56.782-28.419-23.853-12.725-30.922-43.615-14.993-65.458l8.369-11.476c6.058-8.31 6.027-19.587-.082-27.854l-11.322-15.33a2.878 2.878 0 01.336-3.798l18.357-17.388a3.21 3.21 0 013.993-.326 39.885 39.885 0 0022.193 6.701c12.037 0 22.596-5.308 29.895-13.711zM76.944 84.047V37.898m100.282 46.149V37.898"
+                        data-original="#000000"
+                      ></path>
+                      <path
+                        d="M7.5 404.864v51.182c0 9.972 8.084 18.056 18.056 18.056h303.339c9.972 0 18.056-8.084 18.056-18.056V75.713c0-9.972-8.084-18.056-18.056-18.056H25.556c-9.972 0-18.056 8.084-18.056 18.056v294.151m69.444-247.297c-10.637 0-19.26-8.623-19.26-19.26 0-10.637 8.623-19.26 19.26-19.26s19.26 8.623 19.26 19.26c0 10.637-8.624 19.26-19.26 19.26zm100.282 0c-10.637 0-19.26-8.623-19.26-19.26 0-10.637 8.623-19.26 19.26-19.26s19.26 8.623 19.26 19.26c0 10.637-8.623 19.26-19.26 19.26zm100.282 0c-10.637 0-19.26-8.623-19.26-19.26 0-10.637 8.623-19.26 19.26-19.26s19.26 8.623 19.26 19.26c0 10.637-8.623 19.26-19.26 19.26zm0-38.52V37.898M472.82 127.13h23.02c4.78 0 8.66 3.88 8.66 8.66v90.26m-60.4 223.14v-37.14m18.87-307.4V73.83c0-6.09-4.94-11.02-11.03-11.02h-15.68c-6.09 0-11.02 4.93-11.02 11.02v30.82"
+                        data-original="#000000"
+                      ></path>
+                      <path
+                        d="M415.387 185.74v193.448c0 2.439.638 4.835 1.852 6.95l12.661 22.07a7.64 7.64 0 006.627 3.838h15.156a7.64 7.64 0 006.627-3.838l12.661-22.07a13.962 13.962 0 001.852-6.95V111.136a6.486 6.486 0 00-6.486-6.486h-44.462a6.486 6.486 0 00-6.486 6.486v39.604"
+                        data-original="#000000"
+                      ></path>
+                    </g>
+                  </svg>
+                  {registerstatement}
+                </NavLink>
+              </li>
+
+              {/* <SidebarLinkGroup
+                activeCondition={
+                  pathname.includes('viewevidence') ||
+                  pathname.includes('viewwitnesscase') ||
+                  pathname.includes('Viewallvictim') ||
+                  pathname.includes('Viewalloffender')
+                }
+              >
+                {(handleClick, open) => {
+                  return (
+                    <React.Fragment>
+                      <NavLink
+                        to="#"
+                        className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-honolulublue dark:hover:bg-meta-4 ${
+                          (pathname.includes('viewevidence') &&
+                            'bg-honolulublue dark:bg-meta-4') ||
+                          (pathname.includes('viewwitnesscase') &&
+                            'bg-honolulublue dark:bg-meta-4') ||
+                          (pathname.includes('Viewallvictim') &&
+                            'bg-honolulublue dark:bg-meta-4') ||
+                          (pathname.includes('Viewalloffender') &&
+                            'bg-honolulublue dark:bg-meta-4')
+                        }`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          sidebarExpanded
+                            ? handleClick()
+                            : setSidebarExpanded(true);
+                        }}
+                      >
+                        <svg
+                          className="fill-current"
+                          width="18"
+                          height="18"
+                          viewBox="0 0 18 18"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M1.43425 7.5093H2.278C2.44675 7.5093 2.55925 7.3968 2.58737 7.31243L2.98112 6.32805H5.90612L6.27175 7.31243C6.328 7.48118 6.46862 7.5093 6.58112 7.5093H7.453C7.76237 7.48118 7.87487 7.25618 7.76237 7.03118L5.428 1.4343C5.37175 1.26555 5.3155 1.23743 5.14675 1.23743H3.88112C3.76862 1.23743 3.59987 1.29368 3.57175 1.4343L1.153 7.08743C1.0405 7.2843 1.20925 7.5093 1.43425 7.5093ZM4.47175 2.98118L5.3155 5.17493H3.59987L4.47175 2.98118Z"
+                            fill=""
+                          />
+                          <path
+                            d="M10.1249 2.5031H16.8749C17.2124 2.5031 17.5218 2.22185 17.5218 1.85623C17.5218 1.4906 17.2405 1.20935 16.8749 1.20935H10.1249C9.7874 1.20935 9.47803 1.4906 9.47803 1.85623C9.47803 2.22185 9.75928 2.5031 10.1249 2.5031Z"
+                            fill=""
+                          />
+                          <path
+                            d="M16.8749 6.21558H10.1249C9.7874 6.21558 9.47803 6.49683 9.47803 6.86245C9.47803 7.22808 9.75928 7.50933 10.1249 7.50933H16.8749C17.2124 7.50933 17.5218 7.22808 17.5218 6.86245C17.5218 6.49683 17.2124 6.21558 16.8749 6.21558Z"
+                            fill=""
+                          />
+                          <path
+                            d="M16.875 11.1656H1.77187C1.43438 11.1656 1.125 11.4469 1.125 11.8125C1.125 12.1781 1.40625 12.4594 1.77187 12.4594H16.875C17.2125 12.4594 17.5219 12.1781 17.5219 11.8125C17.5219 11.4469 17.2125 11.1656 16.875 11.1656Z"
+                            fill=""
+                          />
+                          <path
+                            d="M16.875 16.1156H1.77187C1.43438 16.1156 1.125 16.3969 1.125 16.7625C1.125 17.1281 1.40625 17.4094 1.77187 17.4094H16.875C17.2125 17.4094 17.5219 17.1281 17.5219 16.7625C17.5219 16.3969 17.2125 16.1156 16.875 16.1156Z"
+                            fill="white"
+                          />
+                        </svg>
+                        {caseelement}
+                        <svg
+                          className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${
+                            open && 'rotate-180'
+                          }`}
+                          width="20"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            clipRule="evenodd"
+                            d="M4.41107 6.9107C4.73651 6.58527 5.26414 6.58527 5.58958 6.9107L10.0003 11.3214L14.4111 6.91071C14.7365 6.58527 15.2641 6.58527 15.5896 6.91071C15.915 7.23614 15.915 7.76378 15.5896 8.08922L10.5896 13.0892C10.2641 13.4147 9.73651 13.4147 9.41107 13.0892L4.41107 8.08922C4.08563 7.76378 4.08563 7.23614 4.41107 6.9107Z"
+                            fill=""
+                          />
+                        </svg>
+                      </NavLink>
+                      {/* <!-- Dropdown Menu Start --> */}
+              {/* <div
+                        className={`translate transform overflow-hidden ${
+                          !open && 'hidden'
+                        }`}
+                      >
+                        <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
+                          <li>
+                            <NavLink
+                              to="/viewevidence"
+                              className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-honolulublue dark:hover:bg-meta-4 ${
+                                (pathname.includes('viewevidence') &&
+                                  'bg-honolulublue dark:bg-meta-4') ||
+                                (pathname.includes('evidencefiles') &&
+                                  'bg-honolulublue dark:bg-meta-4')
+                              }`}
+                            >
+                              <svg
+                                fill="#ffffff"
+                                height="22"
+                                width="22"
+                                version="1.1"
+                                id="Capa_1"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 463 463"
+                                stroke="#ffffff"
+                                stroke-width="4.630000000000001"
+                              >
+                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                <g
+                                  id="SVGRepo_tracerCarrier"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                ></g>
+                                <g id="SVGRepo_iconCarrier">
+                                  {' '}
+                                  <g>
+                                    {' '}
+                                    <path d="M399.5,0h-336C59.358,0,56,3.357,56,7.5v416c0,21.78,17.72,39.5,39.5,39.5h272c21.78,0,39.5-17.72,39.5-39.5V7.5 C407,3.357,403.642,0,399.5,0z M392,423.5c0,13.51-10.991,24.5-24.5,24.5h-272C81.991,448,71,437.01,71,423.5V15h321V423.5z"></path>{' '}
+                                    <path d="M127.98,163.274L200,180.979v46.614c-22.761,16.365-32.663,34.361-36.906,53.851c-0.535,0.389-1.028,0.843-1.45,1.37 l-32,40c-1.064,1.33-1.644,2.982-1.644,4.686v80c0,8.547,6.953,15.5,15.5,15.5h48c8.547,0,15.5-6.953,15.5-15.5v-80 c0-1.703-0.58-3.355-1.644-4.686l-28.223-35.279c2.761-14.979,8.998-28.293,22.867-40.752v0.716c0,17.369,14.131,31.5,31.5,31.5 H264v104.5c0,12.958,10.542,23.5,23.5,23.5h0.5v8.5c0,8.547,6.953,15.5,15.5,15.5h24c8.547,0,15.5-6.953,15.5-15.5v-14.358 c4.899-4.31,8-10.619,8-17.642v-280c0-2.995-1.782-5.703-4.533-6.889L288.99,71.858C282.823,68.694,279,62.445,279,55.5 c0-4.143-3.358-7.5-7.5-7.5s-7.5,3.357-7.5,7.5v16.032c0,5.414-2.447,10.43-6.714,13.762c-4.268,3.332-9.726,4.49-14.98,3.176 L123.26,58.709c-4.661-1.163-9.509-0.138-13.298,2.819C106.173,64.486,104,68.939,104,73.746v58.939 C104,147.226,113.861,159.805,127.98,163.274z M192,330.131V407.5c0,0.275-0.224,0.5-0.5,0.5h-48c-0.276,0-0.5-0.225-0.5-0.5 v-77.369l17.143-21.428c-0.104,3.558-0.143,7.156-0.143,10.798c0,4.143,3.358,7.5,7.5,7.5s7.5-3.357,7.5-7.5 c0-3.576,0.034-7.056,0.13-10.456L192,330.131z M231.5,264c-9.098,0-16.5-7.402-16.5-16.5v-15.995c0-0.008,0-0.017,0-0.025v-46.813 l43.176,10.614c-19.226,7.275-31.884,22.73-32.515,23.511c-2.6,3.225-2.094,7.946,1.13,10.546c1.387,1.119,3.05,1.662,4.704,1.662 c2.19,0,4.361-0.954,5.843-2.792c0.126-0.156,10.971-13.407,26.662-19.104V264H231.5z M328,415.5c0,0.275-0.224,0.5-0.5,0.5h-24 c-0.276,0-0.5-0.225-0.5-0.5V407h24.5c0.168,0,0.333-0.009,0.5-0.013V415.5z M282.458,85.363c0.127,0.064,0.256,0.124,0.387,0.181 L336,108.436v12.34l-37.533-16.164c-3.804-1.637-8.217,0.118-9.855,3.922c-1.639,3.805,0.117,8.217,3.921,9.855L336,137.108v15.667 l-37.533-16.164c-3.804-1.637-8.217,0.117-9.855,3.922c-1.639,3.805,0.117,8.217,3.921,9.855L336,169.108v15.667l-37.533-16.164 c-3.804-1.636-8.217,0.118-9.855,3.922c-1.639,3.805,0.117,8.217,3.921,9.855L336,201.108v15.667l-37.533-16.164 c-3.804-1.637-8.217,0.118-9.855,3.922c-1.639,3.805,0.117,8.217,3.921,9.855L336,233.108V383.5c0,4.687-3.813,8.5-8.5,8.5h-40 c-4.687,0-8.5-3.813-8.5-8.5V83.375C280.102,84.099,281.256,84.763,282.458,85.363z M119,73.746c0-0.073,0-0.244,0.192-0.394 c0.192-0.15,0.357-0.11,0.429-0.091l119.046,29.761c8.762,2.191,17.83,0.672,25.333-4.136v82.38l-132.439-32.558 c-7.396-1.817-12.561-8.406-12.561-16.022V73.746z"></path>{' '}
+                                  </g>{' '}
+                                </g>
+                              </svg>
+                              {viewevidence}
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to="/viewwitnesscase"
+                              className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-honolulublue dark:hover:bg-meta-4 ${
+                                (pathname.includes('viewwitnesscase') &&
+                                  'bg-honolulublue dark:bg-meta-4') ||
+                                (pathname.includes('viewwitness') &&
+                                  'bg-honolulublue dark:bg-meta-4') ||
+                                (pathname.includes('witnessdetails') &&
+                                  'bg-honolulublue dark:bg-meta-4')
+                              }`}
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                version="1.1"
+                                className="fill-current"
+                                width="22"
+                                height="22"
+                                viewBox="0 0 66 66"
+                              >
+                                <g>
+                                  <path
+                                    d="M21.38 17.72a.96.96 0 1 0-.96-.96c.01.53.44.96.96.96zM28.23 17.72a.96.96 0 1 0 0-1.92.96.96 0 0 0 0 1.92zM24.81 23.82c.78 0 1.51-.3 2.06-.85.34-.34.34-.9 0-1.24s-.9-.34-1.24 0c-.44.44-1.2.44-1.64 0-.34-.34-.9-.34-1.24 0s-.34.9 0 1.24c.55.54 1.28.85 2.06.85z"
+                                    fill=""
+                                  ></path>
+                                  <path
+                                    d="M64 48.86H45.61V41.2c0-5.42-4.41-9.83-9.83-9.83-.19 0-.36.07-.5.18-1.32-.76-2.73-1.37-4.19-1.83v-3.2c1.06-.96 2.02-2.15 2.83-3.53.22.06.44.09.67.09 1.85 0 3.3-1.88 3.3-4.28 0-1.59-.67-3.01-1.72-3.74 0-.5 0-1.8-.01-2.66-.05-6.22-5.14-11.27-11.35-11.27S13.51 6.19 13.46 12.4c-.01.86-.01 2.17-.01 2.66-1.05.73-1.72 2.16-1.72 3.74 0 2.4 1.45 4.28 3.3 4.28.23 0 .45-.03.67-.09.81 1.39 1.78 2.57 2.83 3.53v3.2c-1.34.42-2.64.97-3.87 1.65h-.83C8.41 31.37 4 35.78 4 41.2v7.66H2c-.48 0-.88.39-.88.88v5.63c0 .48.39.88.88.88h3.52V64c0 .48.39.88.88.88h53.22c.48 0 .88-.39.88-.88v-7.76H64c.48 0 .88-.39.88-.88v-5.63a.886.886 0 0 0-.88-.87zM27.32 37.53l-1.34-1.63 4.4-4.57c1.21.36 2.38.85 3.5 1.44l-3.94 7.95zM24.81 2.88c5.25 0 9.56 4.28 9.6 9.53v.44c-3.45.29-5.31-1.68-6.02-2.67.85-.85 1.63-1.86 2.29-3.06.23-.42.08-.96-.34-1.19s-.96-.08-1.19.34c-3.77 6.82-11.54 6.64-13.95 6.41v-.28c.04-5.25 4.35-9.52 9.61-9.52zm-7.96 18.58a.883.883 0 0 0-.56-.44.761.761 0 0 0-.21-.03c-.17 0-.34.05-.49.15-1.08.73-2.11-.7-2.11-2.33 0-1.27.6-2.19 1.2-2.44.33-.14.55-.47.54-.83l-.02-.29v-.81c.41.03.91.05 1.51.05 2.64 0 6.88-.5 10.37-3.17.94 1.23 3.06 3.32 6.66 3.32.22 0 .45-.01.69-.03v.64l-.02.29c-.01.36.2.69.54.83.6.25 1.2 1.17 1.2 2.44 0 1.63-1.02 3.06-2.11 2.33-.21-.14-.46-.18-.7-.12s-.44.22-.56.44c-.75 1.43-1.83 2.91-3.16 4.05-.01.01-.02.01-.03.02-1.36 1.16-2.99 1.96-4.78 1.96s-3.41-.8-4.78-1.96L20 25.5c-1.32-1.13-2.4-2.61-3.15-4.04zm7.96 7.77c1.54 0 3.09-.51 4.53-1.4v2.05l-4.53 4.71-4.53-4.71v-2.05c1.44.9 2.98 1.4 4.53 1.4zm-5.58 2.09 4.4 4.58-3.96 4.81-3.94-7.95c1.12-.59 2.29-1.07 3.5-1.44zM5.75 41.2c0-4.46 3.62-8.08 8.08-8.08h.13l4.75 9.58c.13.27.39.45.68.48.03 0 .07.01.1.01a.9.9 0 0 0 .68-.32l4.63-5.64 1.04 1.26 3.6 4.38c.17.2.42.32.68.32.03 0 .07 0 .1-.01.29-.03.55-.21.68-.48l4.76-9.61c.04.01.08.02.12.02 4.45 0 8.08 3.63 8.08 8.08v7.66h-5.09V43.7c0-.48-.39-.88-.88-.88s-.88.39-.88.88v5.15H12.59V43.7c0-.48-.39-.88-.88-.88s-.88.39-.88.88v5.15H5.75zm52.98 21.92H7.27v-6.88h51.47v6.88zm4.39-8.63H2.88v-3.88h60.25v3.88zM42.35 12.12c2.54 2.54 5.91 3.93 9.49 3.93s6.96-1.4 9.49-3.93l2.14-2.14c.34-.34.34-.9 0-1.24L61.33 6.6a13.328 13.328 0 0 0-9.49-3.93c-3.59 0-6.96 1.4-9.49 3.93l-2.14 2.14a.87.87 0 0 0 0 1.24zm1.23-4.27c2.2-2.2 5.13-3.42 8.25-3.42s6.05 1.21 8.25 3.42l1.52 1.52-1.52 1.52c-2.2 2.2-5.14 3.42-8.25 3.42-3.12 0-6.05-1.21-8.25-3.42l-1.52-1.52z"
+                                    fill=""
+                                  ></path>
+                                  <path
+                                    d="M51.84 13.2c2.11 0 3.83-1.72 3.83-3.83 0-.11-.01-.22-.04-.39-.03-.29-.2-.54-.46-.68s-.57-.13-.82 0c-.75.4-1.58-.18-1.58-.94 0-.17.05-.34.13-.5.14-.26.1-.57-.03-.82-.13-.26-.43-.44-.71-.48-.1-.01-.21-.03-.32-.03-2.11 0-3.83 1.72-3.83 3.83s1.71 3.84 3.83 3.84zm-.82-5.73a2.825 2.825 0 0 0 2.73 2.71c-.32.75-1.06 1.27-1.92 1.27-1.15 0-2.08-.93-2.08-2.08.01-.85.51-1.58 1.27-1.9z"
+                                    fill=""
+                                  ></path>
+                                </g>
+                              </svg>
+                              {casewitness}
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to="/Viewallvictim"
+                              className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-honolulublue dark:hover:bg-meta-4 ${
+                                (pathname.includes('Viewallvictim') &&
+                                  'bg-honolulublue dark:bg-meta-4') ||
+                                (pathname.includes('Victimdetails') &&
+                                  'bg-honolulublue dark:bg-meta-4')
+                              }`}
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                version="1.1"
+                                width="22"
+                                height="22"
+                                viewBox="0 0 512 512"
+                                className="fill-current"
+                              >
+                                <g>
+                                  <path
+                                    d="M307.11 185.06c0-28.19-22.92-51.12-51.09-51.12-28.19 0-51.12 22.93-51.12 51.12 0 28.17 22.93 51.09 51.12 51.09 28.17.01 51.09-22.91 51.09-51.09zm-86.2 0c0-19.36 15.75-35.11 35.11-35.11 19.34 0 35.08 15.75 35.08 35.11 0 19.34-15.74 35.08-35.08 35.08-19.36 0-35.11-15.73-35.11-35.08zM169.15 310.3v40.79c0 14.87 11.71 26.97 26.09 26.97h121.52c14.39 0 26.09-12.1 26.09-26.97V310.3c0-37.72-29.43-68.41-65.61-68.41h-42.49c-36.17-.01-65.6 30.68-65.6 68.41zm65.6-52.4h42.49c27.34 0 49.59 23.51 49.59 52.4v40.79c0 6.04-4.52 10.96-10.08 10.96H195.24c-5.56 0-10.08-4.92-10.08-10.96V310.3c0-28.89 22.25-52.4 49.59-52.4zm230.14 32.4c-7.16 43.88-27.64 83.77-59.23 115.36s-71.48 52.08-115.36 59.23c-.44.07-.87.11-1.3.11a8 8 0 0 1-7.89-6.72c-.71-4.37 2.25-8.48 6.61-9.19 82.98-13.53 147.83-78.38 161.37-161.37.71-4.37 4.83-7.33 9.19-6.61 4.36.71 7.33 4.82 6.61 9.19zM47.11 221.7c7.16-43.88 27.64-83.77 59.23-115.36s71.49-52.07 115.36-59.23c4.36-.71 8.48 2.25 9.19 6.61.71 4.37-2.25 8.48-6.61 9.19C141.3 76.45 76.45 141.3 62.91 224.28a8.008 8.008 0 0 1-7.89 6.72c-.43 0-.86-.03-1.3-.11-4.36-.71-7.33-4.82-6.61-9.19zm234-167.98c.71-4.36 4.83-7.32 9.19-6.61 43.88 7.16 83.77 27.64 115.36 59.23s52.08 71.49 59.23 115.36c.71 4.36-2.25 8.48-6.61 9.19-.44.07-.87.11-1.3.11a8 8 0 0 1-7.89-6.72C435.55 141.3 370.7 76.45 287.72 62.91c-4.36-.71-7.33-4.82-6.61-9.19zm-50.22 404.56A8.008 8.008 0 0 1 223 465c-.43 0-.86-.03-1.3-.11-43.88-7.16-83.77-27.64-115.36-59.23S54.26 334.17 47.11 290.3c-.71-4.37 2.25-8.48 6.61-9.19s8.48 2.25 9.19 6.61c13.53 82.98 78.38 147.83 161.37 161.37 4.36.71 7.33 4.82 6.61 9.19zm17.12-369.54v-72c0-4.42 3.58-8.01 8.01-8.01s8.01 3.58 8.01 8.01v72c0 4.42-3.58 8.01-8.01 8.01s-8.01-3.59-8.01-8.01zm16.01 334.52v72c0 4.42-3.58 8.01-8.01 8.01s-8.01-3.58-8.01-8.01v-72c0-4.42 3.58-8.01 8.01-8.01s8.01 3.58 8.01 8.01zm239.25-167.25c0 4.42-3.58 8.01-8.01 8.01h-72c-4.42 0-8.01-3.58-8.01-8.01s3.58-8.01 8.01-8.01h72c4.42.01 8.01 3.59 8.01 8.01zm-414.53 8.01h-72c-4.42 0-8.01-3.58-8.01-8.01s3.58-8.01 8.01-8.01h72c4.42 0 8.01 3.58 8.01 8.01s-3.58 8.01-8.01 8.01z"
+                                    fill=""
+                                  ></path>
+                                </g>
+                              </svg>
+                              {casevictim}
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to="/Viewalloffender"
+                              className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-honolulublue dark:hover:bg-meta-4 ${
+                                (pathname.includes('Viewalloffender') &&
+                                  'bg-honolulublue dark:bg-meta-4') ||
+                                (pathname.includes('offenderdetails') &&
+                                  'bg-honolulublue dark:bg-meta-4')
+                              }`}
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                version="1.1"
+                                width="22"
+                                height="22"
+                                viewBox="0 0 24 24"
+                                className="fill-current"
+                              >
+                                <g>
+                                  <path
+                                    d="M12 11a5 5 0 1 0-5-5 5 5 0 0 0 5 5zm0-8a3 3 0 1 1-3 3 3 3 0 0 1 3-3zm3 9H9a5 5 0 0 0-5 5v5a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-5a5 5 0 0 0-5-5zm-9 9v-4a3 3 0 0 1 1-2.22V21zm3 0v-7h2v7zm4 0v-7h2v7zm5 0h-1v-6.22A3 3 0 0 1 18 17z"
+                                    data-name="29 Offender, Accused, Law"
+                                    fill=""
+                                  ></path>
+                                </g>
+                              </svg>
+                              {caseoffender}
+                            </NavLink>
+                          </li>
+                        </ul>
+                      </div>
+                      {/* <!-- Dropdown Menu End --> */}
+              {/* </React.Fragment> */}
+              {/* );
+                }} */}
+              {/* </SidebarLinkGroup> */}
+
+              {/* <!-- Menu Item All statements --> */}
+              <li>
+                <NavLink
+                  to="/allstatements"
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-honolulublue dark:hover:bg-meta-4 ${
+                    pathname.includes('allstatements') &&
+                    'bg-honolulublue dark:bg-meta-4'
+                  }`}
+                >
+                  <svg
+                    fill="#ffffff"
+                    height="22"
+                    width="22"
+                    version="1.1"
+                    id="Layer_1"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 512 512"
+                    stroke="#ffffff"
+                    stroke-width="5.12"
+                  >
+                    <g id="SVGRepo_iconCarrier">
+                      {' '}
+                      <g>
+                        {' '}
+                        <g>
+                          {' '}
+                          <path d="M217.205,334.821c-5.242-0.107-9.546,4.032-9.659,9.253c-0.44,20.496-14.475,38.628-34.165,44.104 c-0.18,0.05-0.726,0.193-1.935,0.426c-13.369,2.609-25.747,8.865-35.73,17.933c-9.984-9.066-22.368-15.323-35.764-17.94 c-1.178-0.226-1.728-0.368-1.942-0.429c-13.077-3.637-23.925-12.917-29.761-25.46c-5.831-12.531-5.858-26.407-0.073-39.071 l6.453-14.13c3.537-7.743,5.331-15.979,5.331-24.481c0-12.309-3.766-24.082-10.743-33.955l16.97-17.136 c7.453,4.361,15.984,6.7,24.732,6.7c8.73,0,17.318-2.365,24.798-6.752c7.479,4.387,16.067,6.752,24.798,6.752 c8.747,0,17.279-2.341,24.731-6.7l16.97,17.137c-6.978,9.875-10.743,21.649-10.743,33.958c0,8.506,1.792,16.74,5.327,24.479 l6.459,14.13c2.172,4.752,7.785,6.841,12.534,4.671c4.752-2.172,6.841-7.783,4.671-12.534l-6.458-14.129 c-2.399-5.252-3.616-10.843-3.616-16.617c0-10.497,4.029-20.418,11.347-27.935c3.597-3.695,3.571-9.589-0.057-13.251 l-28.634-28.914c-3.501-3.535-9.139-3.754-12.903-0.502c-5.444,4.703-12.415,7.293-19.627,7.293c-6.94,0-13.459-2.303-18.857-6.66 c-3.467-2.8-8.416-2.8-11.882,0c-5.397,4.357-11.918,6.66-18.857,6.66c-7.213,0-14.183-2.59-19.627-7.293 c-3.764-3.252-9.404-3.032-12.903,0.502l-28.634,28.914c-3.628,3.663-3.653,9.559-0.055,13.254 c7.317,7.513,11.346,17.432,11.346,27.929c0,5.772-1.218,11.364-3.621,16.622l-6.458,14.13c-8.003,17.521-7.956,37.536,0.13,54.91 c8.176,17.568,23.427,30.581,41.81,35.693c0.931,0.262,2.072,0.522,3.453,0.787c12.564,2.454,23.949,9.221,32.058,19.055 c1.797,2.179,4.473,3.441,7.298,3.441c2.825,0,5.501-1.262,7.298-3.441c8.11-9.835,19.494-16.602,32.031-19.049 c1.415-0.272,2.551-0.531,3.44-0.782c27.629-7.682,47.356-33.142,47.973-61.914C226.57,339.258,222.428,334.933,217.205,334.821z"></path>{' '}
+                        </g>{' '}
+                      </g>{' '}
+                      <g>
+                        {' '}
+                        <g>
+                          {' '}
+                          <path d="M163.043,283.073h-54.659c-5.223,0-9.458,4.235-9.458,9.458s4.235,9.458,9.458,9.458h54.659 c5.223,0,9.458-4.235,9.458-9.458S168.267,283.073,163.043,283.073z"></path>{' '}
+                        </g>{' '}
+                      </g>{' '}
+                      <g>
+                        {' '}
+                        <g>
+                          {' '}
+                          <path d="M163.043,312.225h-54.659c-5.223,0-9.458,4.235-9.458,9.458s4.235,9.458,9.458,9.458h54.659 c5.223,0,9.458-4.235,9.458-9.458S168.267,312.225,163.043,312.225z"></path>{' '}
+                        </g>{' '}
+                      </g>{' '}
+                      <g>
+                        {' '}
+                        <g>
+                          {' '}
+                          <path d="M346.753,88.728h-29.188c-4.569-29.875-30.44-52.832-61.572-52.832c-31.132,0-57.003,22.955-61.572,52.832h-29.189 c-5.223,0-9.458,4.235-9.458,9.458v39.308H9.458c-5.223,0-9.458,4.235-9.458,9.458v246.423c0,5.225,4.235,9.459,9.458,9.459 s9.458-4.235,9.458-9.458V156.411h136.86v23.052c0,5.223,4.235,9.458,9.458,9.458h181.519c5.225,0,9.458-4.235,9.458-9.458V98.186 C356.212,92.963,351.978,88.728,346.753,88.728z M337.297,170.006H174.693v-62.362h28.471c5.223,0,9.458-4.235,9.458-9.458 c0-23.916,19.457-43.373,43.372-43.373c23.916,0,43.373,19.457,43.373,43.373c0,5.223,4.233,9.458,9.458,9.458h28.47V170.006z"></path>{' '}
+                        </g>{' '}
+                      </g>{' '}
+                      <g>
+                        {' '}
+                        <g>
+                          {' '}
+                          <path d="M502.542,137.495H373.284c-5.225,0-9.458,4.235-9.458,9.458s4.233,9.458,9.458,9.458h119.8v300.776H18.916v-34.385 c0-5.223-4.235-9.458-9.458-9.458S0,417.579,0,422.803v43.843c0,5.223,4.235,9.458,9.458,9.458h493.084 c5.225,0,9.458-4.235,9.458-9.458V146.953C512,141.729,507.767,137.495,502.542,137.495z"></path>{' '}
+                        </g>{' '}
+                      </g>{' '}
+                      <g>
+                        {' '}
+                        <g>
+                          {' '}
+                          <path d="M455.577,235.028H306.568c-5.225,0-9.458,4.235-9.458,9.458c0,5.223,4.233,9.458,9.458,9.458h149.009 c5.225,0,9.458-4.235,9.458-9.458C465.035,239.263,460.802,235.028,455.577,235.028z"></path>{' '}
+                        </g>{' '}
+                      </g>{' '}
+                      <g>
+                        {' '}
+                        <g>
+                          {' '}
+                          <path d="M455.577,378.618H306.568c-5.225,0-9.458,4.235-9.458,9.458c0,5.223,4.233,9.458,9.458,9.458h149.009 c5.225,0,9.458-4.235,9.458-9.458C465.035,382.853,460.802,378.618,455.577,378.618z"></path>{' '}
+                        </g>{' '}
+                      </g>{' '}
+                      <g>
+                        {' '}
+                        <g>
+                          {' '}
+                          <path d="M455.577,282.891H306.568c-5.225,0-9.458,4.235-9.458,9.458s4.233,9.458,9.458,9.458h149.009 c5.225,0,9.458-4.235,9.458-9.458S460.802,282.891,455.577,282.891z"></path>{' '}
+                        </g>{' '}
+                      </g>{' '}
+                      <g>
+                        {' '}
+                        <g>
+                          {' '}
+                          <path d="M455.577,330.755H306.568c-5.225,0-9.458,4.235-9.458,9.458s4.233,9.458,9.458,9.458h149.009 c5.225,0,9.458-4.235,9.458-9.458S460.802,330.755,455.577,330.755z"></path>{' '}
+                        </g>{' '}
+                      </g>{' '}
+                      <g>
+                        {' '}
+                        <g>
+                          {' '}
+                          <circle
+                            cx="255.986"
+                            cy="98.188"
+                            r="9.458"
+                          ></circle>{' '}
+                        </g>{' '}
+                      </g>{' '}
+                    </g>
+                  </svg>
+                  {allstatement}
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/registeredCases"
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-honolulublue dark:hover:bg-meta-4 ${
+                    pathname.includes('registeredCases') &&
+                    'bg-honolulublue dark:bg-meta-4'
+                  }`}
+                >
+                  <svg
+                    fill="#ffffff"
+                    height="22"
+                    width="22"
+                    version="1.1"
+                    id="Layer_1"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 512.00 512.00"
+                    stroke="#ffffff"
+                    stroke-width="5.12"
+                  >
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                    <g
+                      id="SVGRepo_tracerCarrier"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    ></g>
+                    <g id="SVGRepo_iconCarrier">
+                      {' '}
+                      <g>
+                        {' '}
+                        <g>
+                          {' '}
+                          <g>
+                            {' '}
+                            <path d="M501.331,106.666h-10.667V74.671c0-5.892-4.776-10.669-10.669-10.669H243.49l-8.339-15.675 c-1.852-3.482-5.474-5.659-9.418-5.659H10.669C4.777,42.668,0,47.444,0,53.336v405.327c0,5.892,4.777,10.669,10.669,10.669 h490.663c5.891,0,10.669-4.776,10.669-10.669V117.335C512,111.442,507.223,106.666,501.331,106.666z M469.327,85.339v21.327 H266.181l-11.344-21.327H469.327z M490.663,447.995H21.337V64.005h197.985l8.331,15.664c0.025,0.049,0.05,0.098,0.077,0.146 l22.621,42.531c1.852,3.482,5.476,5.659,9.42,5.659h230.891V447.995z"></path>{' '}
+                            <path d="M163.558,106.677c5.89,0,10.669-4.776,10.669-10.669c0-5.892-4.779-10.669-10.669-10.669h-0.254 c-5.892,0-10.669,4.776-10.669,10.669c0,5.892,4.776,10.669,10.669,10.669H163.558z"></path>{' '}
+                            <path d="M132.661,85.334H53.335c-5.89,0-10.669,4.776-10.669,10.669c0,5.892,4.779,10.669,10.669,10.669h79.326 c5.89,0,10.669-4.776,10.669-10.669C143.329,90.11,138.551,85.334,132.661,85.334z"></path>{' '}
+                            <path d="M250.666,188.157c-4.528,2.614-11.755,4.175-19.333,4.176c-10.854,0-20.402-3.069-25.544-8.211 c-4.165-4.165-10.918-4.166-15.087-0.002l-27.778,27.777c-3.588,3.59-4.153,9.212-1.346,13.443 c15.94,24.027,10.695,39.176,4.624,56.719c-0.725,2.093-1.44,4.161-2.107,6.211c-11.377,35.012,7.429,55.973,22.564,68.692 c14.515,12.199,29.597,18.74,41.717,23.995c8.681,3.764,16.176,7.016,20.078,10.918c2,2,4.713,3.126,7.543,3.126 c0.002,0,0.002,0,0.002,0c2.829,0,5.542-1.124,7.543-3.125c4.075-4.075,11.637-7.343,20.391-11.125 c12.011-5.189,26.956-11.648,41.402-23.789c15.137-12.719,33.943-33.678,22.566-68.692c-0.667-2.051-1.382-4.117-2.105-6.211 c-6.074-17.541-11.318-32.692,4.622-56.719c2.809-4.231,2.246-9.854-1.344-13.443l-27.772-27.776 c-4.167-4.165-10.92-4.166-15.089,0c-5.142,5.141-14.693,8.212-25.548,8.212c-7.577,0-14.803-1.561-19.331-4.176 C258.033,186.252,253.964,186.253,250.666,188.157z M280.666,213.669c12.162,0,23.353-2.819,32.081-7.927l15.334,15.335 c-15.901,29.099-8.194,51.357-2.446,67.959c0.68,1.963,1.351,3.903,1.976,5.825c5.936,18.27,1.449,31.1-16.002,45.765 c-12.052,10.129-24.848,15.658-36.138,20.537c-7.256,3.134-13.845,5.982-19.499,9.636c-5.526-3.53-11.994-6.335-19.105-9.419 c-11.41-4.949-24.346-10.558-36.477-20.755c-17.449-14.665-21.936-27.495-15.999-45.763c0.625-1.924,1.298-3.862,1.978-5.826 c5.747-16.603,13.454-38.86-2.448-67.958l15.336-15.335c8.729,5.108,19.916,7.927,32.081,7.926 c9.062-0.001,17.605-1.555,24.665-4.437C263.061,212.115,271.604,213.669,280.666,213.669z"></path>{' '}
+                            <path d="M213.334,287.999c0,23.528,19.139,42.669,42.666,42.669c23.528,0,42.668-19.142,42.668-42.669 c0-23.527-19.141-42.666-42.668-42.666C232.472,245.333,213.334,264.473,213.334,287.999z M256,266.67 c11.762,0,21.331,9.568,21.331,21.329c0,11.762-9.569,21.332-21.331,21.332c-11.76,0-21.329-9.57-21.329-21.332 C234.671,276.238,244.24,266.67,256,266.67z"></path>{' '}
+                          </g>{' '}
+                        </g>{' '}
+                      </g>{' '}
+                    </g>
+                  </svg>
+                  {registeredcase}
+                </NavLink>
+              </li>
+              {/* <!-- Menu Item Case Diary --> */}
+              <li>
+                <NavLink
+                  to="/casediary"
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-honolulublue dark:hover:bg-meta-4 ${
+                    pathname.includes('casediary') &&
+                    'bg-honolulublue dark:bg-meta-4'
+                  }`}
+                >
+                  <svg
+                    className="fill-current"
+                    width="22"
+                    height="22"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M4 19.5C4 18.837 4.26339 18.2011 4.73223 17.7322C5.20107 17.2634 5.83696 17 6.5 17H20"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M6.5 2H20V22H6.5C5.83696 22 5.20107 21.7366 4.73223 21.2678C4.26339 20.7989 4 20.163 4 19.5V4.5C4 3.83696 4.26339 3.20107 4.73223 2.73223C5.20107 2.26339 5.83696 2 6.5 2Z"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M8 6H16"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M8 10H14"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  {casediary}
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/ferrist"
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-honolulublue dark:hover:bg-meta-4 ${
+                    (pathname.includes('ferrist') &&
+                      'bg-honolulublue dark:bg-meta-4') ||
+                    (pathname.includes('chargesheet') &&
+                      'bg-honolulublue dark:bg-meta-4')
+                  }`}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    version="1.1"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    width="22"
+                    height="22"
+                    x="0"
+                    y="0"
+                    viewBox="0 0 682.667 682.667"
+                    xmlSpace="preserve"
+                  >
+                    <g>
+                      <defs>
+                        <clipPath id="a" clipPathUnits="userSpaceOnUse">
+                          <path
+                            d="M0 512h512V0H0Z"
+                            fill=""
+                            opacity="1"
+                            data-original="#000000"
+                          ></path>
+                        </clipPath>
+                      </defs>
+                      <path
+                        d="M0 0h-119.109"
+                        style={{
+                          strokeWidth: 15,
+                          strokeLinecap: 'round',
+                          strokeLinejoin: 'round',
+                          strokeMiterlimit: 10,
+                          strokeDasharray: 'none',
+                          strokeOpacity: 1,
+                        }}
+                        transform="matrix(1.33333 0 0 -1.33333 416.693 425.68)"
+                        fill="none"
+                        stroke="#ffffff"
+                        data-original="#000000"
+                      ></path>
+                      <path
+                        d="M0 0h-82.68"
+                        style={{
+                          strokeWidth: 15,
+                          strokeLinecap: 'round',
+                          strokeLinejoin: 'round',
+                          strokeMiterlimit: 10,
+                          strokeDasharray: 'none',
+                          strokeOpacity: 1,
+                        }}
+                        transform="matrix(1.33333 0 0 -1.33333 368.12 330.76)"
+                        fill="none"
+                        stroke="#ffffff"
+                        data-original="#000000"
+                      ></path>
+                      <path
+                        d="M0 0h-107.86"
+                        style={{
+                          strokeWidth: 15,
+                          strokeLinecap: 'round',
+                          strokeLinejoin: 'round',
+                          strokeMiterlimit: 10,
+                          strokeDasharray: 'none',
+                          strokeOpacity: 1,
+                        }}
+                        transform="matrix(1.33333 0 0 -1.33333 416.853 235.84)"
+                        fill="none"
+                        stroke="#ffffff"
+                        data-original="#000000"
+                      ></path>
+                      <g
+                        clipPath="url(#a)"
+                        transform="matrix(1.33333 0 0 -1.33333 0 682.667)"
+                      >
+                        <path
+                          d="M0 0h67.74c2.76 0 5-2.24 5-5v-67.03"
+                          style={{
+                            strokeWidth: 15,
+                            strokeLinecap: 'round',
+                            strokeLinejoin: 'round',
+                            strokeMiterlimit: 10,
+                            strokeDasharray: 'none',
+                            strokeOpacity: 1,
+                          }}
+                          transform="translate(314.41 420.44)"
+                          fill="none"
+                          stroke="#ffffff"
+                          data-original="#000000"
+                        ></path>
+                        <path
+                          d="M0 0v29.801c0 2.76 2.24 5 5 5h67.74"
+                          style={{
+                            strokeWidth: 15,
+                            strokeLinecap: 'round',
+                            strokeLinejoin: 'round',
+                            strokeMiterlimit: 10,
+                            strokeDasharray: 'none',
+                            strokeOpacity: 1,
+                          }}
+                          transform="translate(120.67 385.64)"
+                          fill="none"
+                          stroke="#ffffff"
+                          data-original="#000000"
+                        ></path>
+                        <path
+                          d="M0 0v64.22"
+                          style={{
+                            strokeWidth: 15,
+                            strokeLinecap: 'round',
+                            strokeLinejoin: 'round',
+                            strokeMiterlimit: 10,
+                            strokeDasharray: 'none',
+                            strokeOpacity: 1,
+                          }}
+                          transform="translate(120.67 149.86)"
+                          fill="none"
+                          stroke="#ffffff"
+                          data-original="#000000"
+                        ></path>
+                        <path
+                          d="M0 0v-109.26c0-2.76-2.24-5-5-5h-256.48c-2.76 0-5 2.24-5 5v44.771"
+                          style={{
+                            strokeWidth: 15,
+                            strokeLinecap: 'round',
+                            strokeLinejoin: 'round',
+                            strokeMiterlimit: 10,
+                            strokeDasharray: 'none',
+                            strokeOpacity: 1,
+                          }}
+                          transform="translate(387.15 179.35)"
+                          fill="none"
+                          stroke="#ffffff"
+                          data-original="#000000"
+                        ></path>
+                        <path
+                          d="m0 0 10.97 30.149C14.63 40.22 25.76 45.41 35.83 41.75l7-2.551"
+                          style={{
+                            strokeWidth: 15,
+                            strokeLinecap: 'round',
+                            strokeLinejoin: 'round',
+                            strokeMiterlimit: 10,
+                            strokeDasharray: 'none',
+                            strokeOpacity: 1,
+                          }}
+                          transform="translate(41.7 242.82)"
+                          fill="none"
+                          stroke="#ffffff"
+                          data-original="#000000"
+                        ></path>
+                        <path
+                          d="m0 0 7-2.55c10.06-3.67 15.26-14.8 11.59-24.87L7.62-57.57"
+                          style={{
+                            strokeWidth: 15,
+                            strokeLinecap: 'round',
+                            strokeLinejoin: 'round',
+                            strokeMiterlimit: 10,
+                            strokeDasharray: 'none',
+                            strokeOpacity: 1,
+                          }}
+                          transform="translate(112.98 271.67)"
+                          fill="none"
+                          stroke="#ffffff"
+                          data-original="#000000"
+                        ></path>
+                        <path
+                          d="m0 0-7.83-21.5c-2.86-7.86 1.19-16.54 9.05-19.4 7.85-2.86 16.54 1.19 19.4 9.04l7.82 21.5"
+                          style={{
+                            strokeWidth: 15,
+                            strokeLinecap: 'round',
+                            strokeLinejoin: 'round',
+                            strokeMiterlimit: 10,
+                            strokeDasharray: 'none',
+                            strokeOpacity: 1,
+                          }}
+                          transform="translate(90.85 299.37)"
+                          fill="none"
+                          stroke="#ffffff"
+                          data-original="#000000"
+                        ></path>
+                        <path
+                          d="m0 0-2.792-7.669c-5.566-15.295 2.32-32.207 17.615-37.773 15.295-5.568 32.206 2.318 37.773 17.613l2.792 7.67c5.566 15.295-2.32 32.206-17.615 37.773C22.479 23.181 5.567 15.295 0 0Z"
+                          style={{
+                            strokeWidth: 15,
+                            strokeLinecap: 'round',
+                            strokeLinejoin: 'round',
+                            strokeMiterlimit: 10,
+                            strokeDasharray: 'none',
+                            strokeOpacity: 1,
+                          }}
+                          transform="translate(88.819 335.71)"
+                          fill="none"
+                          stroke="#ffffff"
+                          data-original="#000000"
+                        ></path>
+                        <path
+                          d="m0 0 141.452-51.484a4.44 4.44 0 0 0 2.652-5.689L92-200.326a4.439 4.439 0 0 0-5.687-2.653l-141.452 51.485a4.438 4.438 0 0 0-2.653 5.688L-5.688-2.653A4.438 4.438 0 0 0 0 0Z"
+                          style={{
+                            strokeWidth: 15,
+                            strokeLinecap: 'round',
+                            strokeLinejoin: 'round',
+                            strokeMiterlimit: 10,
+                            strokeDasharray: 'none',
+                            strokeOpacity: 1,
+                          }}
+                          transform="translate(65.56 405.7)"
+                          fill="none"
+                          stroke="#ffffff"
+                          data-original="#000000"
+                        ></path>
+                        <path
+                          d="m0 0-18.479 32.008"
+                          style={{
+                            strokeWidth: 15,
+                            strokeLinecap: 'round',
+                            strokeLinejoin: 'round',
+                            strokeMiterlimit: 10,
+                            strokeDasharray: 'none',
+                            strokeOpacity: 1,
+                          }}
+                          transform="translate(426.12 155.95)"
+                          fill="none"
+                          stroke="#ffffff"
+                          data-original="#000000"
+                        ></path>
+                        <path
+                          d="m0 0-14.21 24.613a5.245 5.245 0 0 1-7.165 1.92L-53.759 7.836A5.245 5.245 0 0 1-55.678.672l51.81-89.738c6.611-11.452 21.254-15.374 32.705-8.763 11.451 6.611 15.374 21.253 8.763 32.704L17.498-30.308"
+                          style={{
+                            strokeWidth: 15,
+                            strokeLinecap: 'round',
+                            strokeLinejoin: 'round',
+                            strokeMiterlimit: 10,
+                            strokeDasharray: 'none',
+                            strokeOpacity: 1,
+                          }}
+                          transform="translate(463.688 138.762)"
+                          fill="none"
+                          stroke="#ffffff"
+                          data-original="#000000"
+                        ></path>
+                        <path
+                          d="M0 0c-26.922-15.543-36.146-49.969-20.603-76.891 15.544-26.922 49.969-36.145 76.891-20.602 26.922 15.544 36.147 49.969 20.603 76.89C61.348 6.319 26.923 15.544 0 0Z"
+                          style={{
+                            strokeWidth: 15,
+                            strokeLinecap: 'round',
+                            strokeLinejoin: 'round',
+                            strokeMiterlimit: 10,
+                            strokeDasharray: 'none',
+                            strokeOpacity: 1,
+                          }}
+                          transform="translate(336.152 312.93)"
+                          fill="none"
+                          stroke="#ffffff"
+                          data-original="#000000"
+                        ></path>
+                        <path
+                          d="M0 0v-30.006a5 5 0 0 1 5-5h110.996a5 5 0 0 1 5 5V0a5 5 0 0 1-5 5H5a5 5 0 0 1-5-5Z"
+                          style={{
+                            strokeWidth: 15,
+                            strokeLinecap: 'round',
+                            strokeLinejoin: 'round',
+                            strokeMiterlimit: 10,
+                            strokeDasharray: 'none',
+                            strokeOpacity: 1,
+                          }}
+                          transform="translate(193.411 435.443)"
+                          fill="none"
+                          stroke="#ffffff"
+                          data-original="#000000"
+                        ></path>
+                        <path
+                          d="M0 0v11.423c0 12.378 10.035 22.413 22.413 22.413s22.413-10.035 22.413-22.413V0"
+                          style={{
+                            strokeWidth: 15,
+                            strokeLinecap: 'round',
+                            strokeLinejoin: 'round',
+                            strokeMiterlimit: 10,
+                            strokeDasharray: 'none',
+                            strokeOpacity: 1,
+                          }}
+                          transform="translate(231.496 440.443)"
+                          fill="none"
+                          stroke="#ffffff"
+                          data-original="#000000"
+                        ></path>
+                        <path
+                          d="M0 0v-23.093a5 5 0 0 1 5-5h23.092a5 5 0 0 1 5 5V0a5 5 0 0 1-5 5H5a5 5 0 0 1-5-5Z"
+                          style={{
+                            strokeWidth: 15,
+                            strokeLinecap: 'round',
+                            strokeLinejoin: 'round',
+                            strokeMiterlimit: 10,
+                            strokeDasharray: 'none',
+                            strokeOpacity: 1,
+                          }}
+                          transform="translate(170.08 133.74)"
+                          fill="none"
+                          stroke="#ffffff"
+                          data-original="#000000"
+                        ></path>
+                        <path
+                          d="M0 0h71.432"
+                          style={{
+                            strokeWidth: 15,
+                            strokeLinecap: 'round',
+                            strokeLinejoin: 'round',
+                            strokeMiterlimit: 10,
+                            strokeDasharray: 'none',
+                            strokeOpacity: 1,
+                          }}
+                          transform="translate(236.792 105.647)"
+                          fill="none"
+                          stroke="#ffffff"
+                          data-original="#000000"
+                        ></path>
+                        <path
+                          d="M0 0c-41.94-24.215-56.31-77.844-32.096-119.784 24.214-41.94 77.843-56.308 119.784-32.094 41.94 24.215 56.31 77.842 32.096 119.782C95.569 9.844 41.94 24.214 0 0Z"
+                          style={{
+                            strokeWidth: 15,
+                            strokeLinecap: 'round',
+                            strokeLinejoin: 'round',
+                            strokeMiterlimit: 10,
+                            strokeDasharray: 'none',
+                            strokeOpacity: 1,
+                          }}
+                          transform="translate(319.953 339.836)"
+                          fill="none"
+                          stroke="#ffffff"
+                          data-original="#000000"
+                        ></path>
+                      </g>
+                    </g>
+                  </svg>
+                  {ferrist}
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/subcription"
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-honolulublue dark:hover:bg-meta-4 ${
+                    pathname.includes('subcription') &&
+                    'bg-honolulublue dark:bg-meta-4'
+                  }`}
+                >
+                  <AiFillDollarCircle
+                    style={{ width: '30px', height: '30px' }}
+                  />
+                  {/* {subcription} */}
+                  Subcription
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/payment-history"
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-honolulublue dark:hover:bg-meta-4 ${
+                    pathname.includes('payment-history') &&
+                    'bg-honolulublue dark:bg-meta-4'
+                  }`}
+                >
+                  <svg
+                    className="fill-current"
+                    width="22"
+                    height="22"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  Payment History
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/feedback"
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-honolulublue dark:hover:bg-meta-4 ${
+                    pathname.includes('feedback') &&
+                    'bg-honolulublue dark:bg-meta-4'
+                  }`}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 448 448"
+                    id="svg2"
+                    version="1.1"
+                    fill="#ffffff"
+                    stroke="#ffffff"
+                  >
+                    <g id="SVGRepo_bgCarrier" strokeWidth="0" />
+                    <g
+                      id="SVGRepo_tracerCarrier"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <g id="SVGRepo_iconCarrier">
+                      <defs id="defs4">
+                        <pattern
+                          y="0"
+                          x="0"
+                          height="6"
+                          width="6"
+                          patternUnits="userSpaceOnUse"
+                          id="EMFhbasepattern"
+                        />
+                      </defs>
+
+                      <g id="layer1" transform="translate(0,-604.36224)">
+                        <path
+                          style={{
+                            fontStyle: 'normal',
+                            fontVariant: 'normal',
+                            fontWeight: 400,
+                            fontSize: '16.91569519px',
+                            lineHeight: '125%',
+                            fontFamily: '"Segoe UI Symbol"',
+                            textAlign: 'start',
+                            letterSpacing: 0,
+                            wordSpacing: 0,
+                            textAnchor: 'start',
+                            fill: '#ffffff',
+                            fillOpacity: 1,
+                            stroke: 'none',
+                          }}
+                          d="m 128.0117,828.90636 c -0.74631,-41.51564 34.33895,-66.91799 67.84688,-87.12978 43.50681,-24.73552 90.27271,-54.07156 107.25794,-103.20637 6.3415,-16.76389 15.54118,-39.45727 36.51846,-33.11971 20.97989,8.03806 25.79431,35.16152 22.03876,53.01006 -3.48599,24.60676 -19.65099,44.12917 -33.47389,63.89521 -11.2073,20.12083 -14.2753,52.76222 -21.12229,74.62832 50.72153,0.27585 79.53833,-0.98578 130.2297,0 16.27871,15.96113 16.27871,47.8834 -16.27872,63.84453 16.27872,15.96114 16.27872,47.8834 -16.2787,63.84454 16.2787,15.96113 16.2787,47.88339 -16.27872,63.84453 16.27872,15.96121 16.27872,47.88351 -16.27871,63.84461 l -65.11485,0 c -51.07756,0 -178.63305,-5.5481 -179.06586,-31.9223 4.2e-4,-57.99694 -10e-4,-133.53752 0,-191.53364 z"
+                          id="path3369"
+                          inkscape:connector-curvature="0"
+                        />
+                        <path
+                          style={{
+                            fontStyle: 'normal',
+                            fontVariant: 'normal',
+                            fontWeight: 400,
+                            fontSize: '16.91569519px',
+                            lineHeight: '125%',
+                            fontFamily: '"Segoe UI Symbol"',
+                            textAlign: 'start',
+                            letterSpacing: 0,
+                            wordSpacing: 0,
+                            textAnchor: 'start',
+                            fill: '#ffffff',
+                            fillOpacity: 1,
+                            stroke: 'none',
+                          }}
+                          d="m 96.771822,1052.361 -96.771902000001,0 0,-255.99874 96.771902000001,0 0,255.99874 z"
+                          id="path3363"
+                          inkscape:connector-curvature="0"
+                        />
+                        <g
+                          style={{
+                            fontStyle: 'normal',
+                            fontVariant: 'normal',
+                            fontWeight: 400,
+                            fontSize: '13.8125px',
+                            lineHeight: '125%',
+                            fontFamily: 'Calibri',
+                            textAlign: 'start',
+                            letterSpacing: 0,
+                            wordSpacing: 0,
+                            textAnchor: 'start',
+                            fill: '#ffffff',
+                            fillOpacity: 1,
+                            stroke: 'none',
+                          }}
+                          id="text3345"
+                          transform="matrix(20.773546,0,0,20.773546,-6647.5348,-18265.543)"
+                        />
+                      </g>
+                    </g>
+                  </svg>
+                  {feedback}
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/help&Support"
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-honolulublue dark:hover:bg-meta-4 ${
+                    pathname.includes('help&Support') &&
+                    'bg-honolulublue dark:bg-meta-4'
+                  }`}
+                >
+                  <svg
+                    width={22}
+                    height={22}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    stroke="#ffffff"
+                  >
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                    <g
+                      id="SVGRepo_tracerCarrier"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    ></g>
+                    <g id="SVGRepo_iconCarrier">
+                      <path
+                        d="M12 17C12.5523 17 13 16.5523 13 16C13 15.4477 12.5523 15 12 15C11.4477 15 11 15.4477 11 16C11 16.5523 11.4477 17 12 17Z"
+                        fill="#ffffff"
+                      ></path>
+                      <path
+                        d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z"
+                        stroke="#ffffff"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                      ></path>
+                      <path
+                        d="M12 14C12 13.8333 12 13.6667 12 13.5C12 13.5 12 12 14 11C16 10 15.5 7 12.5 7C9.5 7 9.5 9.5 9.5 9.5V10"
+                        stroke="#ffffff"
+                        stroke-width="2"
+                      ></path>
+                    </g>
+                  </svg>{' '}
+                  {helpsupport}
+                </NavLink>
+              </li>
+
+              {/* <li>
+                <NavLink
+                  to="/settings"
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-honolulublue dark:hover:bg-meta-4 ${
+                    pathname.includes('settings') &&
+                    'bg-honolulublue dark:bg-meta-4'
+                  }`}
+                >
+                  <svg
+                    className="fill-current"
+                    width="18"
+                    height="19"
+                    viewBox="0 0 18 19"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <g clipPath="url(#clip0_130_9763)">
+                      <path
+                        d="M17.0721 7.30835C16.7909 6.99897 16.3971 6.83022 15.9752 6.83022H15.8909C15.7502 6.83022 15.6377 6.74585 15.6096 6.63335C15.5815 6.52085 15.5252 6.43647 15.4971 6.32397C15.4409 6.21147 15.4971 6.09897 15.5815 6.0146L15.6377 5.95835C15.9471 5.6771 16.1159 5.28335 16.1159 4.86147C16.1159 4.4396 15.9752 4.04585 15.6659 3.73647L14.569 2.61147C13.9784 1.99272 12.9659 1.9646 12.3471 2.58335L12.2627 2.6396C12.1784 2.72397 12.0377 2.7521 11.8971 2.69585C11.7846 2.6396 11.6721 2.58335 11.5315 2.55522C11.3909 2.49897 11.3065 2.38647 11.3065 2.27397V2.13335C11.3065 1.26147 10.6034 0.55835 9.73148 0.55835H8.15648C7.7346 0.55835 7.34085 0.7271 7.0596 1.00835C6.75023 1.31772 6.6096 1.71147 6.6096 2.10522V2.21772C6.6096 2.33022 6.52523 2.44272 6.41273 2.49897C6.35648 2.5271 6.32835 2.5271 6.2721 2.55522C6.1596 2.61147 6.01898 2.58335 5.9346 2.49897L5.87835 2.4146C5.5971 2.10522 5.20335 1.93647 4.78148 1.93647C4.3596 1.93647 3.96585 2.0771 3.65648 2.38647L2.53148 3.48335C1.91273 4.07397 1.8846 5.08647 2.50335 5.70522L2.5596 5.7896C2.64398 5.87397 2.6721 6.0146 2.61585 6.09897C2.5596 6.21147 2.53148 6.29585 2.47523 6.40835C2.41898 6.52085 2.3346 6.5771 2.19398 6.5771H2.1096C1.68773 6.5771 1.29398 6.71772 0.984604 7.0271C0.675229 7.30835 0.506479 7.7021 0.506479 8.12397L0.478354 9.69897C0.450229 10.5708 1.15335 11.274 2.02523 11.3021H2.1096C2.25023 11.3021 2.36273 11.3865 2.39085 11.499C2.4471 11.5833 2.50335 11.6677 2.53148 11.7802C2.5596 11.8927 2.53148 12.0052 2.4471 12.0896L2.39085 12.1458C2.08148 12.4271 1.91273 12.8208 1.91273 13.2427C1.91273 13.6646 2.05335 14.0583 2.36273 14.3677L3.4596 15.4927C4.05023 16.1115 5.06273 16.1396 5.68148 15.5208L5.76585 15.4646C5.85023 15.3802 5.99085 15.3521 6.13148 15.4083C6.24398 15.4646 6.35648 15.5208 6.4971 15.549C6.63773 15.6052 6.7221 15.7177 6.7221 15.8302V15.9427C6.7221 16.8146 7.42523 17.5177 8.2971 17.5177H9.8721C10.744 17.5177 11.4471 16.8146 11.4471 15.9427V15.8302C11.4471 15.7177 11.5315 15.6052 11.644 15.549C11.7002 15.5208 11.7284 15.5208 11.7846 15.4927C11.9252 15.4365 12.0377 15.4646 12.1221 15.549L12.1784 15.6333C12.4596 15.9427 12.8534 16.1115 13.2752 16.1115C13.6971 16.1115 14.0909 15.9708 14.4002 15.6615L15.5252 14.5646C16.144 13.974 16.1721 12.9615 15.5534 12.3427L15.4971 12.2583C15.4127 12.174 15.3846 12.0333 15.4409 11.949C15.4971 11.8365 15.5252 11.7521 15.5815 11.6396C15.6377 11.5271 15.7502 11.4708 15.8627 11.4708H15.9471H15.9752C16.819 11.4708 17.5221 10.7958 17.5502 9.92397L17.5784 8.34897C17.5221 8.01147 17.3534 7.5896 17.0721 7.30835ZM16.2284 9.9521C16.2284 10.1208 16.0877 10.2615 15.919 10.2615H15.8346H15.8065C15.1596 10.2615 14.569 10.6552 14.344 11.2177C14.3159 11.3021 14.2596 11.3865 14.2315 11.4708C13.9784 12.0333 14.0909 12.7365 14.5409 13.1865L14.5971 13.2708C14.7096 13.3833 14.7096 13.5802 14.5971 13.6927L13.4721 14.7896C13.3877 14.874 13.3034 14.874 13.2471 14.874C13.1909 14.874 13.1065 14.874 13.0221 14.7896L12.9659 14.7052C12.5159 14.2271 11.8409 14.0865 11.2221 14.3677L11.1096 14.424C10.4909 14.6771 10.0971 15.2396 10.0971 15.8865V15.999C10.0971 16.1677 9.95648 16.3083 9.78773 16.3083H8.21273C8.04398 16.3083 7.90335 16.1677 7.90335 15.999V15.8865C7.90335 15.2396 7.5096 14.649 6.89085 14.424C6.80648 14.3958 6.69398 14.3396 6.6096 14.3115C6.3846 14.199 6.1596 14.1708 5.9346 14.1708C5.54085 14.1708 5.1471 14.3115 4.83773 14.6208L4.78148 14.649C4.66898 14.7615 4.4721 14.7615 4.3596 14.649L3.26273 13.524C3.17835 13.4396 3.17835 13.3552 3.17835 13.299C3.17835 13.2427 3.17835 13.1583 3.26273 13.074L3.31898 13.0177C3.7971 12.5677 3.93773 11.8646 3.6846 11.3021C3.65648 11.2177 3.62835 11.1333 3.5721 11.049C3.3471 10.4583 2.7846 10.0365 2.13773 10.0365H2.05335C1.8846 10.0365 1.74398 9.89585 1.74398 9.7271L1.7721 8.1521C1.7721 8.0396 1.82835 7.98335 1.85648 7.9271C1.8846 7.89897 1.96898 7.84272 2.08148 7.84272H2.16585C2.81273 7.87085 3.40335 7.4771 3.65648 6.88647C3.6846 6.8021 3.74085 6.71772 3.76898 6.63335C4.0221 6.07085 3.9096 5.36772 3.4596 4.91772L3.40335 4.83335C3.29085 4.72085 3.29085 4.52397 3.40335 4.41147L4.52835 3.3146C4.61273 3.23022 4.6971 3.23022 4.75335 3.23022C4.8096 3.23022 4.89398 3.23022 4.97835 3.3146L5.0346 3.39897C5.4846 3.8771 6.1596 4.01772 6.77835 3.7646L6.89085 3.70835C7.5096 3.45522 7.90335 2.89272 7.90335 2.24585V2.13335C7.90335 2.02085 7.9596 1.9646 7.98773 1.90835C8.01585 1.8521 8.10023 1.82397 8.21273 1.82397H9.78773C9.95648 1.82397 10.0971 1.9646 10.0971 2.13335V2.24585C10.0971 2.89272 10.4909 3.48335 11.1096 3.70835C11.194 3.73647 11.3065 3.79272 11.3909 3.82085C11.9815 4.1021 12.6846 3.9896 13.1627 3.5396L13.2471 3.48335C13.3596 3.37085 13.5565 3.37085 13.669 3.48335L14.7659 4.60835C14.8502 4.69272 14.8502 4.7771 14.8502 4.83335C14.8502 4.8896 14.8221 4.97397 14.7659 5.05835L14.7096 5.1146C14.2034 5.53647 14.0627 6.2396 14.2877 6.8021C14.3159 6.88647 14.344 6.97085 14.4002 7.05522C14.6252 7.64585 15.1877 8.06772 15.8346 8.06772H15.919C16.0315 8.06772 16.0877 8.12397 16.144 8.1521C16.2002 8.18022 16.2284 8.2646 16.2284 8.3771V9.9521Z"
+                        fill=""
+                      />
+                      <path
+                        d="M9.00029 5.22705C6.89092 5.22705 5.17529 6.94268 5.17529 9.05205C5.17529 11.1614 6.89092 12.8771 9.00029 12.8771C11.1097 12.8771 12.8253 11.1614 12.8253 9.05205C12.8253 6.94268 11.1097 5.22705 9.00029 5.22705ZM9.00029 11.6114C7.59404 11.6114 6.44092 10.4583 6.44092 9.05205C6.44092 7.6458 7.59404 6.49268 9.00029 6.49268C10.4065 6.49268 11.5597 7.6458 11.5597 9.05205C11.5597 10.4583 10.4065 11.6114 9.00029 11.6114Z"
+                        fill=""
+                      />
+                    </g>
+                    <defs>
+                      <clipPath id="clip0_130_9763">
+                        <rect
+                          width="18"
+                          height="18"
+                          fill="white"
+                          transform="translate(0 0.052124)"
+                        />
+                      </clipPath>
+                    </defs>
+                  </svg>
+                  Settings
+                </NavLink>
+              </li> */}
+            </ul>
+          </div>
+        </nav>
+      </div>
+    </aside>
+  );
+};
+
+export default Sidebar;

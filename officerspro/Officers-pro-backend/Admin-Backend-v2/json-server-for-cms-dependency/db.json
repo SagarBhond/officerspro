@@ -1,0 +1,129 @@
+{
+  "cases": {
+    "total": 1250,
+    "active": 850,
+    "completed": 400,
+    "statements": 2100
+  },
+  "officers": {
+    "total": 45
+  },
+  "officersList": [
+    {
+      "id": "OFF-1001",
+      "name": "Rohit Sharma",
+      "email": "rohit@example.com",
+      "phone": "+91-9000000001",
+      "post": "Inspector",
+      "station": "Mumbai Central",
+      "age": "34",
+      "gender": "Male",
+      "enabled": true
+    },
+    {
+      "id": "OFF-1002",
+      "name": "Priya Singh",
+      "email": "priya@example.com",
+      "phone": "+91-9000000002",
+      "post": "Sub-Inspector",
+      "station": "Pune Camp",
+      "age": "29",
+      "gender": "Female",
+      "enabled": true
+    },
+    {
+      "id": "OFF-1003",
+      "name": "Amit Verma",
+      "email": "amit@example.com",
+      "phone": "+91-9000000003",
+      "post": "Constable",
+      "station": "Nagpur East",
+      "age": "31",
+      "gender": "Male",
+      "enabled": false
+    }
+  ],
+  "feedbackList": [
+    {
+      "id": 1,
+      "officerId": "OFF-1001",
+      "title": "App Feedback",
+      "message": "Great app",
+      "createdAt": "2024-05-01T12:00:00"
+    },
+    {
+      "id": 2,
+      "officerId": "OFF-1003",
+      "title": "Bug Report",
+      "message": "Unable to upload file",
+      "createdAt": "2024-06-11T10:30:00"
+    }
+  ],
+  "helpAndSupportList": [
+    {
+      "uuid": "HS-1111",
+      "officerId": "OFF-1001",
+      "subject": "Password Reset",
+      "message": "Forgot password",
+      "status": "OPEN",
+      "createdAt": "2024-05-10T09:00:00",
+      "response": "hi"
+    },
+    {
+      "uuid": "HS-1112",
+      "officerId": "OFF-1002",
+      "subject": "Payment Issue",
+      "message": "Payment pending",
+      "status": "RESOLVED",
+      "createdAt": "2024-05-12T16:30:00"
+    }
+  ],
+  "subscriptions": [
+    {
+      "id": 1,
+      "email": "info@configserverllp.com",
+      "planName": "PREMIUM",
+      "status": "ACTIVE",
+      "startDate": "2024-01-01",
+      "endDate": "2024-12-31",
+      "officerCount": 5,
+      "officerName": "Rohit Sharma",
+      "officerEmail": "rohit@example.com"
+    },
+    {
+      "id": 2,
+      "email": "admin@example.com",
+      "planName": "BASIC",
+      "status": "ACTIVE",
+      "startDate": "2024-02-01",
+      "endDate": "2024-11-30",
+      "officerCount": 2,
+      "officerName": "Amit Verma",
+      "officerEmail": "amit@example.com"
+    }
+  ],
+  "paymentHistory": [
+    {
+      "id": 1,
+      "email": "info@configserverllp.com",
+      "amount": 5000,
+      "planName": "PREMIUM",
+      "paymentDate": "2024-01-01T10:00:00",
+      "status": "PAID",
+      "razorpayOrderId": "order_ABC123",
+      "razorpayPaymentId": "pay_XYZ789",
+      "officerName": "Rohit Sharma"
+    },
+    {
+      "id": 2,
+      "email": "admin@example.com",
+      "amount": 2000,
+      "planName": "BASIC",
+      "paymentDate": "2024-02-01T15:45:00",
+      "status": "PAID",
+      "razorpayOrderId": "order_DEF456",
+      "razorpayPaymentId": "pay_UVW123",
+      "officerName": "Amit Verma"
+    }
+  ]
+}

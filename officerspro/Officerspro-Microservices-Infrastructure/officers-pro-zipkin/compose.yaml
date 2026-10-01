@@ -1,0 +1,5 @@
+﻿services:
+  zipkin:
+    build: .
+    ports:
+      - "9411:9411"

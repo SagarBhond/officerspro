@@ -1,0 +1,18 @@
+#!/bin/bash
+set -euo pipefail
+
+dnf install -y awscli-2 jq openssl mariadb105
+
+install -d -m 0700 /opt/officerspro
+echo '${database_init_script_b64}' | base64 --decode > /opt/officerspro/init-rds-databases.sh
+chmod 0700 /opt/officerspro/init-rds-databases.sh
+
+cat >/usr/local/bin/init-officerspro-databases <<'EOF'
+#!/bin/bash
+set -euo pipefail
+export AWS_REGION='${aws_region}'
+export RDS_HOST='${rds_host}'
+export RDS_ADMIN_SECRET_ARN='${rds_admin_secret_arn}'
+exec /opt/officerspro/init-rds-databases.sh
+EOF
+chmod 0700 /usr/local/bin/init-officerspro-databases

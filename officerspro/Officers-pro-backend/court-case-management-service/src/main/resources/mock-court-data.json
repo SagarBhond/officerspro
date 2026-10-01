@@ -1,0 +1,319 @@
+{
+  "tracking": [
+    {
+      "firId": "FIR_MH_PNE_2025_000002",
+      "courtTrackingId": "CT-2025-001",
+      "courtName": "District Court Mumbai",
+      "registeredDate": "2025-01-15"
+    },
+    {
+      "firId": "FIR_MH_PNE_2025_000001",
+      "courtTrackingId": "CT-2025-002",
+      "courtName": "District Court Pune",
+      "registeredDate": "2025-01-16"
+    },
+    {
+      "firId": "FIR_MH_PNE_2025_000004",
+      "courtTrackingId": "CT-2025-003",
+      "courtName": "District Court Thane",
+      "registeredDate": "2025-01-17"
+    },
+    {
+      "firId": "FIR-2025-004",
+      "courtTrackingId": "CT-2025-004",
+      "courtName": "District Court Nagpur",
+      "registeredDate": "2025-01-18"
+    },
+    {
+      "firId": "FIR-2025-005",
+      "courtTrackingId": "CT-2025-005",
+      "courtName": "District Court Nashik",
+      "registeredDate": "2025-01-19"
+    },
+    {
+      "firId": "FIR-2025-006",
+      "courtTrackingId": "CT-2025-006",
+      "courtName": "District Court Aurangabad",
+      "registeredDate": "2025-01-20"
+    },
+    {
+      "firId": "FIR-2025-007",
+      "courtTrackingId": "CT-2025-007",
+      "courtName": "District Court Solapur",
+      "registeredDate": "2025-01-21"
+    },
+    {
+      "firId": "FIR-2025-008",
+      "courtTrackingId": "CT-2025-008",
+      "courtName": "District Court Kolhapur",
+      "registeredDate": "2025-01-22"
+    },
+    {
+      "firId": "FIR-2025-009",
+      "courtTrackingId": "CT-2025-009",
+      "courtName": "District Court Amravati",
+      "registeredDate": "2025-01-23"
+    },
+    {
+      "firId": "FIR-2025-010",
+      "courtTrackingId": "CT-2025-010",
+      "courtName": "District Court Nanded",
+      "registeredDate": "2025-01-24"
+    },
+    {
+      "firId": "FIR_MH_PNE_2025_000003",
+      "courtTrackingId": "CT-2025-MH-003",
+      "courtName": "District Court Pune",
+      "registeredDate": "2025-12-05"
+    }
+  ],
+  "hearings": [
+    {
+      "courtTrackingId": "CT-2025-001",
+      "hearingDate": "2025-01-20",
+      "hearingTime": "14:00",
+      "venue": "District Court Mumbai",
+      "status": "COMPLETED"
+    },
+    {
+      "courtTrackingId": "CT-2025-001",
+      "hearingDate": "2025-02-15",
+      "hearingTime": "10:00",
+      "venue": "District Court Mumbai",
+      "status": "UPCOMING"
+    },
+    {
+      "courtTrackingId": "CT-2025-001",
+      "hearingDate": "2025-03-10",
+      "hearingTime": "11:30",
+      "venue": "District Court Mumbai",
+      "status": "UPCOMING"
+    },
+    {
+      "courtTrackingId": "CT-2025-001",
+      "hearingDate": "2025-04-05",
+      "hearingTime": "15:00",
+      "venue": "District Court Mumbai",
+      "status": "UPCOMING"
+    },
+    {
+      "courtTrackingId": "CT-2025-002",
+      "hearingDate": "2025-01-25",
+      "hearingTime": "11:00",
+      "venue": "District Court Pune",
+      "status": "COMPLETED"
+    },
+    {
+      "courtTrackingId": "CT-2025-002",
+      "hearingDate": "2025-02-20",
+      "hearingTime": "14:30",
+      "venue": "District Court Pune",
+      "status": "UPCOMING"
+    },
+    {
+      "courtTrackingId": "CT-2025-002",
+      "hearingDate": "2025-03-18",
+      "hearingTime": "10:30",
+      "venue": "District Court Pune",
+      "status": "UPCOMING"
+    },
+    {
+      "courtTrackingId": "CT-2025-003",
+      "hearingDate": "2025-02-05",
+      "hearingTime": "09:30",
+      "venue": "District Court Thane",
+      "status": "UPCOMING"
+    },
+    {
+      "courtTrackingId": "CT-2025-003",
+      "hearingDate": "2025-03-01",
+      "hearingTime": "13:00",
+      "venue": "District Court Thane",
+      "status": "UPCOMING"
+    },
+    {
+      "courtTrackingId": "CT-2025-003",
+      "hearingDate": "2025-04-10",
+      "hearingTime": "11:00",
+      "venue": "District Court Thane",
+      "status": "UPCOMING"
+    },
+    {
+      "courtTrackingId": "CT-2025-004",
+      "hearingDate": "2025-01-28",
+      "hearingTime": "10:00",
+      "venue": "District Court Nagpur",
+      "status": "COMPLETED"
+    },
+    {
+      "courtTrackingId": "CT-2025-004",
+      "hearingDate": "2025-02-22",
+      "hearingTime": "15:30",
+      "venue": "District Court Nagpur",
+      "status": "UPCOMING"
+    },
+    {
+      "courtTrackingId": "CT-2025-004",
+      "hearingDate": "2025-03-20",
+      "hearingTime": "09:00",
+      "venue": "District Court Nagpur",
+      "status": "UPCOMING"
+    },
+    {
+      "courtTrackingId": "CT-2025-005",
+      "hearingDate": "2025-02-10",
+      "hearingTime": "14:00",
+      "venue": "District Court Nashik",
+      "status": "UPCOMING"
+    },
+    {
+      "courtTrackingId": "CT-2025-005",
+      "hearingDate": "2025-03-15",
+      "hearingTime": "10:30",
+      "venue": "District Court Nashik",
+      "status": "UPCOMING"
+    },
+    {
+      "courtTrackingId": "CT-2025-006",
+      "hearingDate": "2025-02-08",
+      "hearingTime": "11:30",
+      "venue": "District Court Aurangabad",
+      "status": "UPCOMING"
+    },
+    {
+      "courtTrackingId": "CT-2025-006",
+      "hearingDate": "2025-03-12",
+      "hearingTime": "14:00",
+      "venue": "District Court Aurangabad",
+      "status": "UPCOMING"
+    },
+    {
+      "courtTrackingId": "CT-2025-007",
+      "hearingDate": "2025-01-30",
+      "hearingTime": "13:30",
+      "venue": "District Court Solapur",
+      "status": "COMPLETED"
+    },
+    {
+      "courtTrackingId": "CT-2025-007",
+      "hearingDate": "2025-02-25",
+      "hearingTime": "10:00",
+      "venue": "District Court Solapur",
+      "status": "UPCOMING"
+    },
+    {
+      "courtTrackingId": "CT-2025-008",
+      "hearingDate": "2025-02-12",
+      "hearingTime": "15:00",
+      "venue": "District Court Kolhapur",
+      "status": "UPCOMING"
+    },
+    {
+      "courtTrackingId": "CT-2025-008",
+      "hearingDate": "2025-03-22",
+      "hearingTime": "11:30",
+      "venue": "District Court Kolhapur",
+      "status": "UPCOMING"
+    },
+    {
+      "courtTrackingId": "CT-2025-009",
+      "hearingDate": "2025-02-18",
+      "hearingTime": "09:30",
+      "venue": "District Court Amravati",
+      "status": "UPCOMING"
+    },
+    {
+      "courtTrackingId": "CT-2025-009",
+      "hearingDate": "2025-03-25",
+      "hearingTime": "14:30",
+      "venue": "District Court Amravati",
+      "status": "UPCOMING"
+    },
+    {
+      "courtTrackingId": "CT-2025-010",
+      "hearingDate": "2025-02-14",
+      "hearingTime": "10:30",
+      "venue": "District Court Nanded",
+      "status": "UPCOMING"
+    },
+    {
+      "courtTrackingId": "CT-2025-010",
+      "hearingDate": "2025-03-28",
+      "hearingTime": "13:00",
+      "venue": "District Court Nanded",
+      "status": "UPCOMING"
+    },
+    {
+      "courtTrackingId": "CT-2025-MH-003",
+      "hearingDate": "2025-12-01",
+      "hearingTime": "10:00",
+      "venue": "District Court Pune",
+      "status": "COMPLETED"
+    },
+    {
+      "courtTrackingId": "CT-2025-MH-003",
+      "hearingDate": "2025-12-10",
+      "hearingTime": "14:00",
+      "venue": "District Court Pune",
+      "status": "COMPLETED"
+    },
+    {
+      "courtTrackingId": "CT-2025-MH-003",
+      "hearingDate": "2026-01-15",
+      "hearingTime": "11:00",
+      "venue": "District Court Pune",
+      "status": "UPCOMING"
+    },
+    {
+      "courtTrackingId": "CT-2025-MH-003",
+      "hearingDate": "2026-02-20",
+      "hearingTime": "15:30",
+      "venue": "District Court Pune",
+      "status": "UPCOMING"
+    }
+  ],
+  "judgments": [
+    {
+      "courtTrackingId": "CT-2025-001",
+      "hearingDate": "2025-01-20",
+      "summary": "Case adjourned for further investigation. Defence counsel requested additional time to gather evidence. Prosecution agreed to the adjournment.",
+      "judgmentDate": "2025-01-20",
+      "outcome": "ADJOURNED"
+    },
+    {
+      "courtTrackingId": "CT-2025-002",
+      "hearingDate": "2025-01-25",
+      "summary": "Witness cross-examination completed. Next hearing scheduled for presentation of digital evidence by the prosecution team.",
+      "judgmentDate": "2025-01-25",
+      "outcome": "PROCEEDING"
+    },
+    {
+      "courtTrackingId": "CT-2025-004",
+      "hearingDate": "2025-01-28",
+      "summary": "Bail application rejected. Accused to remain in judicial custody pending trial. Strong evidence presented by prosecution.",
+      "judgmentDate": "2025-01-28",
+      "outcome": "BAIL_REJECTED"
+    },
+    {
+      "courtTrackingId": "CT-2025-007",
+      "hearingDate": "2025-01-30",
+      "summary": "Settlement reached between parties. Accused agreed to compensate the victim. Case closed with mutual consent.",
+      "judgmentDate": "2025-01-30",
+      "outcome": "SETTLED"
+    },
+    {
+      "courtTrackingId": "CT-2025-MH-003",
+      "hearingDate": "2025-12-01",
+      "summary": "Preliminary hearing completed. Evidence presented by prosecution. Defense requested time to review documents.",
+      "judgmentDate": "2025-12-01",
+      "outcome": "ADJOURNED"
+    },
+    {
+      "courtTrackingId": "CT-2025-MH-003",
+      "hearingDate": "2025-12-10",
+      "summary": "Witness testimony recorded. Cross-examination completed. Next hearing for final arguments.",
+      "judgmentDate": "2025-12-10",
+      "outcome": "PROCEEDING"
+    }
+  ]
+}

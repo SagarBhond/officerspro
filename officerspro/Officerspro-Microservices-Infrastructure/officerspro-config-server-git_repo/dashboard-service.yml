@@ -1,0 +1,58 @@
+spring:
+  application:
+    name: dashboard-service
+
+server:
+  port: 8093
+
+logging:
+  level:
+    com:
+      configserver:
+        officerspro:
+          dashboardservice: DEBUG
+    org:
+      springframework:
+        web: INFO
+        client:
+          RestTemplate: DEBUG
+    feign: DEBUG
+
+# Service URLs
+complaint:
+  service:
+    url: "http://localhost:8082"
+
+investigation:
+  service:
+    url: "http://localhost:8083"
+
+audit:
+  service:
+    url: "http://localhost:8089"
+
+# Feign Client Configuration
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 10000
+        loggerLevel: full
+
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info,metrics"
+  endpoint:
+    health:
+      show-details: always
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true

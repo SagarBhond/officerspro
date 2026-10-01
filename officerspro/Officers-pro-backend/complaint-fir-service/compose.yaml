@@ -1,0 +1,47 @@
+services:
+  complaint-fir-service:
+    image: officer-pro/complaint-fir-service:local
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8087:8080"
+    environment:
+      SERVER_PORT: "8080"
+      SPRING_CONFIG_IMPORT: "optional:configserver:http://host.docker.internal:8888"
+      SPRING_CLOUD_CONFIG_FAIL_FAST: "false"
+      EUREKA_CLIENT_REGISTER_WITH_EUREKA: "false"
+      EUREKA_CLIENT_FETCH_REGISTRY: "false"
+      SPRING_DATASOURCE_URL: "jdbc:mysql://db:3306/complaintFIR?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC"
+      SPRING_DATASOURCE_USERNAME: officerspro
+      SPRING_DATASOURCE_PASSWORD: "${SPRING_DATASOURCE_PASSWORD:?Set SPRING_DATASOURCE_PASSWORD}"
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    volumes:
+      - complaint-uploads:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: complaintFIR
+      MYSQL_USER: officerspro
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD:?Set MYSQL_PASSWORD}"
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD}"
+    ports:
+      - "3386:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 15s
+    restart: unless-stopped
+
+volumes:
+  mysql-data:
+  complaint-uploads:

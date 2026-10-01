@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: investigationandcasediaryservice
+
+  config:
+    import: "optional:configserver:http://localhost:8888"
+
+  cloud:
+    config:
+      fail-fast: true
+      retry:
+        initial-interval: 1000
+        max-attempts: 6
+        max-interval: 2000
+        multiplier: 1.1
+    compatibility-verifier:
+      enabled: false
+
+auth:
+  service:
+    base-url: http://localhost:8088/api/auth
+
+
+
+services:
+  ferrist:
+    url: http://localhost:8087/ferrist
+  document:
+    url: http://localhost:8087/api/documents

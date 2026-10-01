@@ -1,0 +1,47 @@
+server:
+  port: 8088
+
+spring:
+  application:
+    name: auth-service
+#  main:
+#    allow-bean-definition-overriding: true
+#  security:
+#    oauth2:
+#      resourceserver:
+#        jwt:
+#          issuer-uri: http://localhost:8080/realms/OfficerPro
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0
+
+logging:
+  level:
+    org.springframework.security.oauth2.jwt: DEBUG
+    org.springframework.security.oauth2.server.resource: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg traceId=%X{traceId:-} spanId=%X{spanId:-}%n"
+
+keycloak:
+  server-url: http://localhost:8080/
+  realm: OfficerPro
+  client-id: officerpro-admin
+  client-secret: 7uW0Fiq7pvLIxlmOEhbRqnBru9dWJ1jQ
+  admin:
+    username: admin
+    password: admin
+    client-secret: 7uW0Fiq7pvLIxlmOEhbRqnBru9dWJ1jQ

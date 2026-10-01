@@ -1,0 +1,13 @@
+{
+  "name": "officers-pro-json-server",
+  "version": "1.0.0",
+  "description": "JSON Server for Officers Pro Admin Backend dummy data",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "json-server": "^0.17.4"
+  }
+}

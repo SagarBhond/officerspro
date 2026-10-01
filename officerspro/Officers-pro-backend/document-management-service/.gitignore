@@ -1,0 +1,10 @@
+target/
+.env.aws
+
+
+
+
+
+##custom paths
+InFutureUpdates
+logs

@@ -1,0 +1,257 @@
+{
+  "complaint-fir": [
+    { 
+  "id": "FIR/MH/PNE/2025/000123",
+  "firId": "FIR/MH/PNE/2025/000123", 
+  "complaintId": "CMP/MH/PNE/2025/01234", 
+  "firDate": "2025-07-15", 
+  "policeStation": "Pune Cyber Police", 
+  "officerInCharge": "Inspector Sameer Deshmukh", 
+  "ipcSections": ["379", "420"], 
+  "complaintDetails": { 
+    "subject": "Motorbike Theft", 
+    "description": "Hero Splendor stolen from parking area." 
+  }, 
+  "participants": { 
+    "complainants": [ 
+      {"citizenId": 101, "name": "Ravi Patil"} 
+    ], 
+    "victims": [ 
+      {"citizenId": 102, "name": "Sanjay Deshmukh"} 
+    ], 
+    "accused": [ 
+      {"citizenId": 103, "name": "Rohit Sharma"} 
+    ], 
+    "witnesses": [ 
+      {"citizenId": 104, "name": "Nilesh Kulkarni"} 
+    ] 
+  }, 
+  "documents": [ 
+    { 
+      "documentId": 2001, 
+      "fileName": "ComplaintCopy.pdf", 
+      "mimeType": "application/pdf", 
+      "linkedTo": "FIR", 
+      "s3Link": "https://s3.amazonaws.com/police/FIR/ComplaintCopy.pdf", 
+      "sizeBytes": 158000, 
+      "createdBy": 201, 
+      "createdAt": "2025-07-15T11:00:00Z" 
+    }, 
+    { 
+      "documentId": 2002, 
+      "fileName": "FIRReport.pdf", 
+      "mimeType": "application/pdf", 
+      "linkedTo": "FIR", 
+      "s3Link": "https://s3.amazonaws.com/police/FIR/FIRReport.pdf", 
+ 
+      "sizeBytes": 200000, 
+      "createdBy": 201, 
+      "createdAt": "2025-07-15T11:05:00Z" 
+    } 
+  ] 
+} 
+  ],
+  "investigation": [
+    { 
+      "id":"INV/MH/PNE/2025/000789",
+  "investigationId": "INV/MH/PNE/2025/000789", 
+  "firId": "FIR/MH/PNE/2025/000123", 
+  "caseId": "CASE/MH/PNE/2025/000123", 
+  "investigatingOfficer": { 
+    "officerId": 201, 
+    "name": "Inspector Rajesh More", 
+    "designation": "Investigating Officer" 
+  }, 
+  "investigationStatus": "Completed", 
+  "caseDiary": [ 
+    { 
+      "entryId": "CD/MH/PNE/2025/001", 
+      "entryDate": "2025-08-10", 
+      "summary": "Visited crime scene and collected physical evidence.", 
+      "createdBy": 201, 
+ 
+      "createdAt": "2025-08-10T10:30:00Z" 
+    } 
+  ], 
+  "evidences": [ 
+    { 
+      "evidenceId": "EVD/MH/PNE/2025/0100", 
+      "type": "Physical", 
+      "description": "Seized motorbike with ignition key.", 
+      "status": "Submitted", 
+      "documents": [ 
+        { 
+          "documentId": 4001, 
+          "fileName": "SeizureReport.pdf", 
+          "mimeType": "application/pdf", 
+          "linkedTo": "EVIDENCE", 
+          "s3Link": "https://s3.amazonaws.com/police-data/evidence/SeizureReport.pdf", 
+          "sizeBytes": 245000, 
+          "createdBy": 201, 
+          "createdAt": "2025-08-12T12:00:00Z" 
+        } 
+      ] 
+    }, 
+    { 
+      "evidenceId": "EVD/MH/PNE/2025/0103", 
+      "type": "Multimedia", 
+      "description": "CCTV footage from the parking area.", 
+      "status": "Submitted", 
+      "documents": [ 
+        { 
+          "documentId": 4603, 
+          "fileName": "Certificate65B.pdf", 
+          "mimeType": "application/pdf", 
+          "linkedTo": "EVIDENCE", 
+          "s3Link": "https://s3.amazonaws.com/police-data/evidence/Certificate65B.pdf", 
+          "sizeBytes": 30000, 
+          "createdBy": 201, 
+          "createdAt": "2025-08-12T12:15:00Z" 
+        }, 
+        { 
+          "documentId": 4604, 
+          "fileName": "Transcript.pdf", 
+          "mimeType": "application/pdf", 
+          "linkedTo": "EVIDENCE", 
+          "s3Link": "https://s3.amazonaws.com/police-data/evidence/Transcript.pdf", 
+          "sizeBytes": 45000, 
+          "createdBy": 201, 
+          "createdAt": "2025-08-12T12:18:00Z" 
+        } 
+ 
+      ], 
+      "multimediaFiles": [ 
+        { 
+          "multimediaId": 9001, 
+          "fileName": "CCTVFootage.mp4", 
+          "mimeType": "video/mp4", 
+          "s3Link": 
+"https://s3.amazonaws.com/police-data/evidence/videos/CCTVFootage.mp4", 
+          "s3Bucket": "police-data", 
+          "s3Key": "evidence/videos/CCTVFootage.mp4", 
+          "durationSeconds": 120, 
+          "fileSize": 15000000, 
+          "resolution": "1920x1080", 
+          "bitrateKbps": 2048, 
+          "createdBy": 201, 
+          "createdAt": "2025-08-12T12:20:00Z" 
+        } 
+      ] 
+    } 
+  ] 
+} 
+
+  ],
+  "documents": [
+    {
+      "id": 2001,
+      "documentId": 2001,
+      "fileName": "ComplaintCopy.pdf",
+      "mimeType": "application/pdf",
+      "linkedTo": "FIR",
+      "linkId": "FIR/MH/PNE/2025/000123",
+      "s3Link": "http://localhost:3000/files/ComplaintCopy.pdf",
+      "sizeBytes": 158000,
+      "pageCount": 2,
+      "createdBy": 201,
+      "createdAt": "2025-07-15T11:00:00Z"
+    },
+    {
+      "id": 2002,
+      "documentId": 2002,
+      "fileName": "FIRReport.pdf",
+      "mimeType": "application/pdf",
+      "linkedTo": "FIR",
+      "linkId": "FIR/MH/PNE/2025/000123",
+      "s3Link": "http://localhost:3000/files/FIRReport.pdf",
+      "sizeBytes": 200000,
+      "pageCount": 2,
+      "createdBy": 201,
+      "createdAt": "2025-07-15T11:05:00Z"
+    },
+    {
+      "id": 4001,
+      "documentId": 4001,
+      "fileName": "SeizureReport.pdf",
+      "mimeType": "application/pdf",
+      "linkedTo": "EVIDENCE",
+      "linkId": "EVD/MH/PNE/2025/0100",
+      "s3Link": "http://localhost:3000/files/SeizureReport.pdf",
+      "sizeBytes": 245000,
+      "pageCount": 5,
+      "createdBy": 201,
+      "createdAt": "2025-08-12T12:00:00Z"
+    },
+    {
+      "id": 4603,
+      "documentId": 4603,
+      "fileName": "Certificate65B.pdf",
+      "mimeType": "application/pdf",
+      "linkedTo": "EVIDENCE",
+      "linkId": "EVD/MH/PNE/2025/0103",
+      "s3Link": "http://localhost:3000/files/Certificate65B.pdf",
+      "sizeBytes": 30000,
+      "pageCount": 1,
+      "createdBy": 201,
+      "createdAt": "2025-08-12T12:15:00Z"
+    },
+    {
+      "id": 4604,
+      "documentId": 4604,
+      "fileName": "Transcript.pdf",
+      "mimeType": "application/pdf",
+      "linkedTo": "EVIDENCE",
+      "linkId": "EVD/MH/PNE/2025/0103",
+      "s3Link": "http://localhost:3000/files/Transcript.pdf",
+      "sizeBytes": 45000,
+      "pageCount": 3,
+      "createdBy": 201,
+      "createdAt": "2025-08-12T12:18:00Z"
+    },
+    {
+      "id": 4605,
+      "documentId": 4605,
+      "fileName": "document-4605.pdf",
+      "mimeType": "application/pdf",
+      "linkedTo": "CHARGESHEET",
+      "linkId": null,
+      "s3Link": "http://localhost:3000/files/document-4605.pdf",
+      "sizeBytes": 0,
+      "pageCount": 0,
+      "createdBy": null,
+      "createdAt": "2025-10-24T10:48:47.411Z",
+      "remarks": null
+    },
+    {
+      "id": 4606,
+      "documentId": 4606,
+      "fileName": "document-4606.pdf",
+      "mimeType": "application/pdf",
+      "linkedTo": "CHARGESHEET",
+      "linkId": null,
+      "s3Link": "http://localhost:3000/files/document-4606.pdf",
+      "sizeBytes": 0,
+      "pageCount": 0,
+      "createdBy": null,
+      "createdAt": "2025-10-24T10:49:19.758Z",
+      "remarks": null
+    },
+    {
+      "id": 4607,
+      "documentId": 4607,
+      "fileName": "document-4607.pdf",
+      "mimeType": "application/pdf",
+      "linkedTo": "CHARGESHEET",
+      "linkId": null,
+      "s3Link": "http://localhost:3000/files/document-4607.pdf",
+      "sizeBytes": 0,
+      "pageCount": 0,
+      "createdBy": null,
+      "createdAt": "2025-10-24T10:49:22.633Z",
+      "remarks": null
+    }
+  ],
+  "chargesheet_master": [],
+  "ferrist_master": [],
+  "ferrist_document": []
+}

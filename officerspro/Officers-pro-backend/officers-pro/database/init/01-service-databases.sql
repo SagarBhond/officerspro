@@ -1,0 +1,44 @@
+CREATE DATABASE IF NOT EXISTS `admindb`;
+CREATE DATABASE IF NOT EXISTS `auditDB`;
+CREATE DATABASE IF NOT EXISTS `chargesheetdb`;
+CREATE DATABASE IF NOT EXISTS `complaintFIR`;
+CREATE DATABASE IF NOT EXISTS `officersprocourt`;
+CREATE DATABASE IF NOT EXISTS `officersprodocument`;
+CREATE DATABASE IF NOT EXISTS `helpandsupportfeedback`;
+CREATE DATABASE IF NOT EXISTS `investigationservice`;
+CREATE DATABASE IF NOT EXISTS `officersproprofile`;
+CREATE DATABASE IF NOT EXISTS `subscription_payment_db`;
+
+CREATE USER IF NOT EXISTS 'admin_service'@'%' IDENTIFIED BY 'localroot';
+CREATE USER IF NOT EXISTS 'audit_service'@'%' IDENTIFIED BY 'localroot';
+CREATE USER IF NOT EXISTS 'chargesheet_service'@'%' IDENTIFIED BY 'localroot';
+CREATE USER IF NOT EXISTS 'complaint_fir_service'@'%' IDENTIFIED BY 'localroot';
+CREATE USER IF NOT EXISTS 'court_case_service'@'%' IDENTIFIED BY 'localroot';
+CREATE USER IF NOT EXISTS 'document_service'@'%' IDENTIFIED BY 'localroot';
+CREATE USER IF NOT EXISTS 'help_support_service'@'%' IDENTIFIED BY 'localroot';
+CREATE USER IF NOT EXISTS 'investigation_service'@'%' IDENTIFIED BY 'localroot';
+CREATE USER IF NOT EXISTS 'profile_service'@'%' IDENTIFIED BY 'localroot';
+CREATE USER IF NOT EXISTS 'subscription_payment_service'@'%' IDENTIFIED BY 'localroot';
+
+ALTER USER 'admin_service'@'%' IDENTIFIED BY 'localroot';
+ALTER USER 'audit_service'@'%' IDENTIFIED BY 'localroot';
+ALTER USER 'chargesheet_service'@'%' IDENTIFIED BY 'localroot';
+ALTER USER 'complaint_fir_service'@'%' IDENTIFIED BY 'localroot';
+ALTER USER 'court_case_service'@'%' IDENTIFIED BY 'localroot';
+ALTER USER 'document_service'@'%' IDENTIFIED BY 'localroot';
+ALTER USER 'help_support_service'@'%' IDENTIFIED BY 'localroot';
+ALTER USER 'investigation_service'@'%' IDENTIFIED BY 'localroot';
+ALTER USER 'officerspro'@'%' IDENTIFIED BY 'localroot';
+ALTER USER 'profile_service'@'%' IDENTIFIED BY 'localroot';
+ALTER USER 'subscription_payment_service'@'%' IDENTIFIED BY 'localroot';
+
+GRANT ALL PRIVILEGES ON `admindb`.* TO 'admin_service'@'%';
+GRANT ALL PRIVILEGES ON `auditDB`.* TO 'audit_service'@'%';
+GRANT ALL PRIVILEGES ON `chargesheetdb`.* TO 'chargesheet_service'@'%';
+GRANT ALL PRIVILEGES ON `complaintFIR`.* TO 'complaint_fir_service'@'%';
+GRANT ALL PRIVILEGES ON `officersprocourt`.* TO 'court_case_service'@'%';
+GRANT ALL PRIVILEGES ON `officersprodocument`.* TO 'document_service'@'%';
+GRANT ALL PRIVILEGES ON `helpandsupportfeedback`.* TO 'help_support_service'@'%';
+GRANT ALL PRIVILEGES ON `investigationservice`.* TO 'investigation_service'@'%';
+GRANT ALL PRIVILEGES ON `officersproprofile`.* TO 'profile_service'@'%';
+GRANT ALL PRIVILEGES ON `subscription_payment_db`.* TO 'subscription_payment_service'@'%';

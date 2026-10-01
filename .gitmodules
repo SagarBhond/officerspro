@@ -1,0 +1,66 @@
+[submodule "officer-pro-frontend"]
+	path = officer-pro-frontend
+	url = https://github.com/Config-Server-LLP/officer-pro-frontend.git
+[submodule "officerspro-Officers-pro-backend-Admin-Backend-v2"]
+	path = officerspro/Officers-pro-backend/Admin-Backend-v2
+	url = https://github.com/Config-Server-LLP/Admin-Backend-v2.git
+[submodule "officerspro-Officers-pro-backend-audit-service"]
+	path = officerspro/Officers-pro-backend/audit-service
+	url = https://github.com/Config-Server-LLP/audit-service.git
+[submodule "officerspro-Officers-pro-backend-chargesheet-generator-service"]
+	path = officerspro/Officers-pro-backend/chargesheet-generator-service
+	url = https://github.com/Config-Server-LLP/chargesheet-generator-service.git
+[submodule "officerspro-Officers-pro-backend-complaint-fir-service"]
+	path = officerspro/Officers-pro-backend/complaint-fir-service
+	url = https://github.com/Config-Server-LLP/complaint-fir-service.git
+[submodule "officerspro-Officers-pro-backend-court-case-management-service"]
+	path = officerspro/Officers-pro-backend/court-case-management-service
+	url = https://github.com/Config-Server-LLP/court-case-management-service.git
+[submodule "officerspro-Officers-pro-backend-dashboard-service"]
+	path = officerspro/Officers-pro-backend/dashboard-service
+	url = https://github.com/Config-Server-LLP/dashboard-service.git
+[submodule "officerspro-Officers-pro-backend-document-management-service"]
+	path = officerspro/Officers-pro-backend/document-management-service
+	url = https://github.com/Config-Server-LLP/document-management-service.git
+[submodule "officerspro-Officers-pro-backend-help-support-feedback-service"]
+	path = officerspro/Officers-pro-backend/help-support-feedback-service
+	url = https://github.com/Config-Server-LLP/help-support-feedback-service.git
+[submodule "officerspro-Officers-pro-backend-investigation-service"]
+	path = officerspro/Officers-pro-backend/investigation-service
+	url = https://github.com/Config-Server-LLP/investigation-service.git
+[submodule "officerspro-Officers-pro-backend-mock-server"]
+	path = officerspro/Officers-pro-backend/mock-server
+	url = https://github.com/Config-Server-LLP/mock-server.git
+[submodule "officerspro-Officers-pro-backend-notification-center-service"]
+	path = officerspro/Officers-pro-backend/notification-center-service
+	url = https://github.com/Config-Server-LLP/notification-center-service.git
+[submodule "officerspro-Officers-pro-backend-officers-pro"]
+	path = officerspro/Officers-pro-backend/officers-pro
+	url = https://github.com/Config-Server-LLP/officers-pro.git
+[submodule "officerspro-Officers-pro-backend-profile-service"]
+	path = officerspro/Officers-pro-backend/profile-service
+	url = https://github.com/Config-Server-LLP/profile-service.git
+[submodule "officerspro-Officers-pro-backend-subscription-payment-service"]
+	path = officerspro/Officers-pro-backend/subscription-payment-service
+	url = https://github.com/Config-Server-LLP/subscription-payment-service.git
+[submodule "officerspro-Officerspro-Microservices-Infrastructure-officers-pro-zipkin"]
+	path = officerspro/Officerspro-Microservices-Infrastructure/officers-pro-zipkin
+	url = https://github.com/Config-Server-LLP/officers-pro-zipkin.git
+[submodule "officerspro-Officerspro-Microservices-Infrastructure-officerspro-api-gateway-service"]
+	path = officerspro/Officerspro-Microservices-Infrastructure/officerspro-api-gateway-service
+	url = https://github.com/Config-Server-LLP/officerspro-api-gateway-service.git
+[submodule "officerspro-Officerspro-Microservices-Infrastructure-officerspro-auth-service"]
+	path = officerspro/Officerspro-Microservices-Infrastructure/officerspro-auth-service
+	url = https://github.com/Config-Server-LLP/officerspro-auth-service.git
+[submodule "officerspro-Officerspro-Microservices-Infrastructure-officerspro-config-server-git_repo"]
+	path = officerspro/Officerspro-Microservices-Infrastructure/officerspro-config-server-git_repo
+	url = https://github.com/Config-Server-LLP/officerspro-config-server-git_repo.git
+[submodule "officerspro-Officerspro-Microservices-Infrastructure-officerspro-config-service"]
+	path = officerspro/Officerspro-Microservices-Infrastructure/officerspro-config-service
+	url = https://github.com/Config-Server-LLP/officerspro-config-service.git
+[submodule "officerspro-Officerspro-Microservices-Infrastructure-officerspro-discovery-server-service"]
+	path = officerspro/Officerspro-Microservices-Infrastructure/officerspro-discovery-server-service
+	url = https://github.com/Config-Server-LLP/officerspro-discovery-server-service.git
+[submodule "officerspro-Officerspro-Microservices-Infrastructure-officerspro-keycloak"]
+	path = officerspro/Officerspro-Microservices-Infrastructure/officerspro-keycloak
+	url = https://github.com/Config-Server-LLP/officerspro-keycloak.git

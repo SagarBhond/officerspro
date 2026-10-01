@@ -1,0 +1,251 @@
+server:
+  port: 8087
+
+spring:
+  application:
+    name: api-gateway
+  main:
+    web-application-type: reactive
+
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lowerCaseServiceId: true
+
+      routes:
+        # ==========================
+        # Auth Service (Public)
+        # ==========================
+        - id: auth-service-public
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/auth/users
+            - Path=/api/auth/public/**
+          filters:
+            - StripPrefix=0
+            - name: CircuitBreaker
+              args:
+                name: authCB
+                fallbackUri: forward:/fallback
+
+        # ==========================
+        # Auth Service (Protected)
+        # ==========================
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - StripPrefix=0
+            - name: CircuitBreaker
+              args:
+                name: authProtectedCB
+                fallbackUri: forward:/fallback
+
+        # ==========================
+        # Profile Service
+        # ==========================
+        - id: profile-service
+          uri: lb://profile-service
+          predicates:
+            - Path=/api/profile/**
+          filters:
+            - StripPrefix=0
+            - name: CircuitBreaker
+              args:
+                name: profileCB
+                fallbackUri: forward:/fallback
+
+        # ==========================
+        # Document Service
+        # ==========================
+        - id: document-service
+          uri: lb://document-service
+          predicates:
+            - Path=/api/documents/**
+          filters:
+            - StripPrefix=0
+            - name: CircuitBreaker
+              args:
+                name: documentCB
+                fallbackUri: forward:/fallback
+
+        # ==========================
+        # Subscription / Payments Service
+        # ==========================
+        - id: subscription-payment-service-subscriptions
+          uri: lb://subscription-payment-service
+          predicates:
+            - Path=/api/subscriptions/**
+          filters:
+            - StripPrefix=0
+            - name: CircuitBreaker
+              args:
+                name: subscriptionPaymentCB
+                fallbackUri: forward:/fallback
+
+        - id: subscription-payment-service-payments
+          uri: lb://subscription-payment-service
+          predicates:
+            - Path=/api/payments/**
+          filters:
+            - StripPrefix=0
+            - name: CircuitBreaker
+              args:
+                name: subscriptionPaymentCB
+                fallbackUri: forward:/fallback
+
+        - id: subscription-payment-service-history
+          uri: lb://subscription-payment-service
+          predicates:
+            - Path=/api/payment-history/**
+          filters:
+            - StripPrefix=0
+            - name: CircuitBreaker
+              args:
+                name: subscriptionPaymentCB
+                fallbackUri: forward:/fallback
+
+        # ====================================
+        # Complain and FIR Service (Secured with Keycloak JWT)
+        # ====================================
+        - id: complaintandfir-service1
+          uri: lb://complaintandfir-service1
+          predicates:
+            - Path=/api/victim/**, /api/witnesses/**
+          filters:
+            - StripPrefix=0
+            - name: CircuitBreaker
+              args:
+                name: complaintandfirCB
+                fallbackUri: forward:/fallback
+
+
+        # ====================================
+        # Investigation and Evidence Service (Secured with Keycloak JWT)
+        # ====================================
+        - id: investigationandcasediaryservice
+          uri: lb://investigationandcasediaryservice
+          predicates:
+            - Path=/api/investigation/**, /api/casediary/**, /api/evidence/**, /api/witnesses/**
+          filters:
+            - StripPrefix=0
+            - name: CircuitBreaker
+              args:
+                name: investigationandcasediaryserviceCB
+                fallbackUri: forward:/fallback
+
+        # ==========================
+        # Court Case Management Service
+        # ==========================
+        - id: court-case-management-service
+          uri: lb://court-case-management-service
+          predicates:
+            - Path=/courtcases/**
+            - Path=/judgement/**
+            - Path=/summon/**
+          filters:
+            - StripPrefix=0
+            - name: CircuitBreaker
+              args:
+                name: courtCaseCB
+                fallbackUri: forward:/fallback
+
+        # ====================================
+        # Dashboard service (Secured with Keycloak JWT)
+        # ====================================
+        - id: dashboard-service
+          uri: lb://dashboard-service
+          predicates:
+            - Path=/api/admin/**
+          filters:
+            - StripPrefix=0
+            - name: CircuitBreaker
+              args:
+                name: dashboard-serviceCB
+                fallbackUri: forward:/fallback
+
+        # ====================================
+        # helpandsupportservice service (Secured with Keycloak JWT)
+        # ====================================
+        - id: help-service-2
+          uri: lb://help-service
+          predicates:
+            - Path=/api/helpandsupport/**
+          filters:
+            - StripPrefix=0
+            - name: CircuitBreaker
+              args:
+                name: helpServiceCB
+                fallbackUri: forward:/fallback
+
+        - id: chargesheet-service
+          uri: lb://chargesheet-service
+          predicates:
+            - Path=/ferrist/**, /chargesheet/**
+          filters:
+            - StripPrefix=0
+           # - name: CircuitBreaker
+           #   args:
+           #     name: chargesheetServiceCB
+           #     fallbackUri: forward:/fallback
+
+      # Default Filters (moved outside routes)
+      default-filters:
+        - name: RequestRateLimiter
+          args:
+            redis-rate-limiter.replenishRate: 10
+            redis-rate-limiter.burstCapacity: 20
+        - name: CircuitBreaker
+          args:
+            name: gatewayCB
+            fallbackUri: forward:/fallback
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/OfficerPro
+          jwk-set-uri: http://localhost:8080/realms/OfficerPro/protocol/openid-connect/certs
+
+  zipkin:
+    base-url: http://localhost:9411
+    enabled: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: arti.hemantj@gmail.com
+    password: zrza cvwn osys ogkg
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,gateway
+  tracing:
+    enabled: true
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %5p [${spring.application.name:},traceId=%X{traceId:-},spanId=%X{spanId:-}] %logger{36} - %msg%n"

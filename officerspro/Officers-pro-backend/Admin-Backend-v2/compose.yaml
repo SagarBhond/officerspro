@@ -1,0 +1,16 @@
+﻿services:
+  json-server-admin:
+    build:
+      context: ./json-server-admin
+    ports:
+      - "3001:3001"
+    environment:
+      PORT: "3001"
+  json-server-for-cms-dependency:
+    build:
+      context: ./json-server-for-cms-dependency
+    ports:
+      - "3002:3002"
+    environment:
+      PORT: "3002"
+

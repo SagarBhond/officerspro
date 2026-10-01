@@ -1,0 +1,12 @@
+﻿services:
+  keycloak:
+    image: officer-pro/keycloak:local
+    build: .
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-change-me}
+
+

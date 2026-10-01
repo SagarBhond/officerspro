@@ -1,0 +1,61 @@
+spring:
+  application:
+    name: complaintandfir-service1
+  main:
+    allow-bean-definition-overriding: true
+  web:
+    resources:
+      static-locations: "file:uploads/"
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+  datasource:
+    url: "jdbc:mysql://localhost:3306/complaintFIR?createDatabaseIfNotExist=true"
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+server:
+  port: 8082
+
+file:
+  upload-dir: "uploads/citizens/"
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    com.configserver.officerspro: DEBUG
+    com.configserver.officerspro.complainandfirservice.client: DEBUG
+
+feign:
+  client:
+    config:
+      default:
+        loggerLevel: FULL
+
+document:
+  service:
+    url: "http://localhost:8085"
+
+audit:
+  service:
+    url: "http://localhost:8089"
+
+profile:
+  service:
+    url: "http://localhost:8084"
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true

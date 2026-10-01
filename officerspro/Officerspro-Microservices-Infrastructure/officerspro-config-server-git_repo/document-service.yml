@@ -1,0 +1,148 @@
+server:
+  port: 8085
+  tomcat:
+    connection-timeout: 60000        # Increased from 20s → 60s
+    max-http-form-post-size: 200MB   # Increased from 50MB → 200MB
+    max-swallow-size: 200MB          # New property to prevent upload limits during streaming
+    threads:
+      max: 200                       # Increased thread max pool size for load handling
+
+spring:
+  application:
+    name: document-service
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 200MB           # Increased from 50MB → 200MB
+      max-request-size: 200MB        # Increased from 50MB → 200MB
+      file-size-threshold: 2MB       # Kept as original (threshold where file buffering starts)
+
+
+  # Database Configuration (MySQL)
+  datasource:
+    url: jdbc:mysql://localhost:3306/officersprodocument?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: root
+    password: "${CONFIG_SERVER_PASSWORD:?Set CONFIG_SERVER_PASSWORD}"
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+      idle-timeout: 300000
+      max-lifetime: 1200000
+
+  # JPA Configuration
+  jpa:
+    hibernate:
+      ddl-auto: update
+      # For production, use: validate or none with Flyway migrations
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+    open-in-view: false
+
+  # Jackson Configuration
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+      fail-on-empty-beans: false
+    deserialization:
+      fail-on-unknown-properties: false
+    date-format: com.fasterxml.jackson.databind.util.StdDateFormat
+    time-zone: UTC
+
+  # Actuator Endpoints
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: health,info,metrics
+    endpoint:
+      health:
+        show-details: always
+        show-components: always
+    info:
+      env:
+        enabled: true
+
+# Logging Configuration
+logging:
+  level:
+    com.configserver.cms.documentservice: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.web: INFO
+    org.springframework.security: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/document-service.log
+
+# Custom Application Properties
+app:
+  service:
+    name: Document Service
+    version: 1.0.0
+    description: Microservice for managing document metadata and linkages
+  security:
+    enabled: false  # Set to true when adding Spring Security
+  cors:
+    allowed-origins: "http://localhost:3000,http://localhost:4200"
+    allowed-methods: "GET,POST,PUT,PATCH,DELETE,OPTIONS"
+    allowed-headers: "*"
+    allow-credentials: true
+  pagination:
+    default-page-size: 20
+    max-page-size: 100
+    max-file-size: 50MB
+    allowed-extensions: ".pdf,.jpg,.jpeg,.png,.doc,.docx,.txt"
+  audit:
+    enable-audit-log: true
+
+# Springdoc OpenAPI Configuration (Swagger)
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+    display-request-duration: true
+  packages-to-scan: com.configserver.cms.documentservice.controller
+  default-produces-media-type: application/json
+  default-consumes-media-type: application/json
+
+# Info Endpoint Configuration
+info:
+  app:
+    name: "@project.name@"
+    version: "@project.version@"
+    description: "@project.description@"
+  build:
+    artifact: "@project.artifactId@"
+    group: "@project.groupId@"
+    time: "${build.time:}"
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+
+# AWS S3 Configuration
+aws:
+  access-key-id: ${AWS_ACCESS_KEY_ID}
+  secret-access-key: ${AWS_SECRET_ACCESS_KEY}
+  region: ap-south-1
+  s3:
+    bucket-name: sagar0010
+    folder: officerspro/

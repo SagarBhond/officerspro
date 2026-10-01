@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+TF_DIR="$ROOT_DIR/infra/terraform"
+BACKEND_DIR="$ROOT_DIR/Officers-pro-backend/officers-pro/officers-pro-backend"
+AWS_REGION="${AWS_REGION:-ap-south-1}"
+
+if [[ "${DEPLOY_AWS:-}" != "yes" ]]; then
+  printf 'This provisions billable AWS resources. Set DEPLOY_AWS=yes to confirm.\n' >&2
+  exit 2
+fi
+if [[ -z "${TF_VAR_s3_bucket_name:-}" || -z "${TF_VAR_app_runtime_secret_arn:-}" ]]; then
+  printf 'Set TF_VAR_s3_bucket_name and TF_VAR_app_runtime_secret_arn before deploying.\n' >&2
+  exit 2
+fi
+
+command -v terraform >/dev/null || { printf 'terraform is required.\n' >&2; exit 1; }
+command -v aws >/dev/null || { printf 'AWS CLI is required.\n' >&2; exit 1; }
+command -v docker >/dev/null || { printf 'Docker is required.\n' >&2; exit 1; }
+
+terraform -chdir="$TF_DIR" init
+terraform -chdir="$TF_DIR" validate
+
+# Publish an initial image before ECS starts any tasks.
+terraform -chdir="$TF_DIR" apply \
+  -target=aws_ecr_repository.backend \
+  -target=aws_ecr_repository.frontend \
+  -var="aws_region=$AWS_REGION" \
+  -var="s3_bucket_name=$TF_VAR_s3_bucket_name" \
+  -var="app_runtime_secret_arn=$TF_VAR_app_runtime_secret_arn" \
+  -auto-approve
+
+account_id="$(aws sts get-caller-identity --query Account --output text)"
+registry="${account_id}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+aws ecr get-login-password --region "$AWS_REGION" |
+  docker login --username AWS --password-stdin "$registry"
+
+docker build -t "$registry/officerspro/backend:latest" \
+  -f "$BACKEND_DIR/dockerfile" "$BACKEND_DIR"
+docker push "$registry/officerspro/backend:latest"
+
+# Create RDS and EC2 infrastructure while keeping the backend task count at zero.
+terraform -chdir="$TF_DIR" apply \
+  -var="aws_region=$AWS_REGION" \
+  -var="s3_bucket_name=$TF_VAR_s3_bucket_name" \
+  -var="app_runtime_secret_arn=$TF_VAR_app_runtime_secret_arn" \
+  -var="backend_desired_count=0" \
+  -auto-approve
+
+database_bootstrap_instance_id="$(terraform -chdir="$TF_DIR" output -raw database_bootstrap_instance_id)"
+aws ssm wait instance-online \
+  --region "$AWS_REGION" \
+  --instance-id "$database_bootstrap_instance_id"
+database_init_command_id="$(aws ssm send-command \
+  --region "$AWS_REGION" \
+  --instance-ids "$database_bootstrap_instance_id" \
+  --document-name AWS-RunShellScript \
+  --comment "Initialize OfficersPro MySQL schemas and service accounts" \
+  --parameters 'commands=["cloud-init status --wait","/usr/local/bin/init-officerspro-databases"]' \
+  --query 'Command.CommandId' \
+  --output text)"
+
+database_init_status=""
+for attempt in $(seq 1 180); do
+  database_init_status="$(aws ssm get-command-invocation \
+    --region "$AWS_REGION" \
+    --command-id "$database_init_command_id" \
+    --instance-id "$database_bootstrap_instance_id" \
+    --query Status \
+    --output text 2>/dev/null || true)"
+  case "$database_init_status" in
+    Success) break ;;
+    Failed|Cancelled|TimedOut|Undeliverable|Terminated|DeliveryTimedOut|ExecutionTimedOut)
+      aws ssm get-command-invocation \
+        --region "$AWS_REGION" \
+        --command-id "$database_init_command_id" \
+        --instance-id "$database_bootstrap_instance_id" \
+        --query '{Status:Status,Output:StandardOutputContent,Error:StandardErrorContent}' \
+        --output json || true
+      exit 1
+      ;;
+  esac
+  sleep 10
+done
+if [[ "$database_init_status" != "Success" ]]; then
+  printf 'Timed out waiting for the RDS database initialization command.\n' >&2
+  exit 1
+fi
+
+aws ssm get-command-invocation \
+  --region "$AWS_REGION" \
+  --command-id "$database_init_command_id" \
+  --instance-id "$database_bootstrap_instance_id" \
+  --query '{Status:Status,Output:StandardOutputContent}' \
+  --output json
+
+terraform -chdir="$TF_DIR" apply \
+  -var="aws_region=$AWS_REGION" \
+  -var="s3_bucket_name=$TF_VAR_s3_bucket_name" \
+  -var="app_runtime_secret_arn=$TF_VAR_app_runtime_secret_arn" \
+  -var="backend_desired_count=1" \
+  -auto-approve
+
+printf 'Infrastructure and databases are ready. Configure the GitHub OIDC roles and frontend instance variable before pushing.\n'

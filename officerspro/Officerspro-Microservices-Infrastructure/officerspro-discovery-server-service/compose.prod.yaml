@@ -1,0 +1,15 @@
+﻿services:
+  officerspro-discovery-server-service:
+    image: officer-pro/officerspro-discovery-server-service:local
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8761:8761"
+    environment:
+      SERVER_PORT: "8761"
+      SPRING_CONFIG_IMPORT: "optional:configserver:http://host.docker.internal:8888"
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://host.docker.internal:8761/eureka/"
+
+

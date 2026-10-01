@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: api-gateway
+
+  config:
+    import: "optional:configserver:http://localhost:8888"
+
+  cloud:
+    config:
+      fail-fast: true
+      retry:
+        initial-interval: 1000
+        max-attempts: 6
+        max-interval: 2000
+        multiplier: 1.1
+    compatibility-verifier:
+      enabled: false
+
+security:
+  oauth2:
+    resourceserver:
+      jwt:
+        # Keycloak issuer (for officer-facing tokens)
+        keycloak-issuer: http://localhost:8080/realms/OfficerPro
+        # Admin backend HMAC secret for validating admin JWTs via gateway
+        admin:
+          secret: ${ADMIN_JWT_SECRET:05c2b92d51f2ebbb93b441277dceb22e531eaecb3aba966c50bd64d7aa778e5656ca0c0aa3e496237a115b89f9f01163e648d9831688a290f5f0b0b2b20b9cb8}
