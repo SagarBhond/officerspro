@@ -75,6 +75,17 @@ variable "backend_desired_count" {
   }
 }
 
+variable "microservices_desired_count" {
+  description = "Desired count for complaint/FIR and auxiliary backend services during staged deployment."
+  type        = number
+  default     = 1
+
+  validation {
+    condition     = var.microservices_desired_count >= 0
+    error_message = "microservices_desired_count must be zero or greater."
+  }
+}
+
 variable "database_multi_az" {
   description = "Enable Multi-AZ RDS availability (increases cost)."
   type        = bool
@@ -90,6 +101,12 @@ variable "database_deletion_protection" {
 variable "app_runtime_secret_arn" {
   description = "Secrets Manager secret ARN containing AES_ENCRYPTION_KEY and KEYCLOAK_CLIENT_SECRET JSON fields."
   type        = string
+}
+
+variable "subscription_payment_secret_arn" {
+  description = "Optional Secrets Manager secret ARN containing payment and mail credentials for the subscription service."
+  type        = string
+  default     = ""
 }
 
 variable "s3_bucket_name" {

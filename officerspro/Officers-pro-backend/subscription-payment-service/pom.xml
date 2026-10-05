@@ -125,7 +125,6 @@
 					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
-<<<<<<< Updated upstream
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
@@ -134,45 +133,8 @@
 						<exclude>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
-							<version>1.18.38</version>
 						</exclude>
 					</excludes>
-=======
-<!--			<plugin>-->
-<!--				<groupId>org.springframework.boot</groupId>-->
-<!--				<artifactId>spring-boot-maven-plugin</artifactId>-->
-<!--				<configuration>-->
-<!--					<excludes>-->
-<!--						<exclude>-->
-<!--							<groupId>org.projectlombok</groupId>-->
-<!--							<artifactId>lombok</artifactId>-->
-<!--						</exclude>-->
-<!--					</excludes>-->
-<!--				</configuration>-->
-<!--			</plugin>-->
-
-			<plugin>
-				<groupId>com.google.cloud.tools</groupId>
-				<artifactId>jib-maven-plugin</artifactId>
-				<version>3.3.1</version> <!-- Use the latest stable version -->
-				<configuration>
-					<to>
-						<image>dineshraywade/subscription-payment-service</image>
-
-						<tags>
-							<tag>latest</tag>
-							<tag>${project.version}</tag>
-							<!-- <tag>${git.commit.id.abbrev}</tag> -->
-						</tags>
-					</to>
-					<!-- Optional: specify credentials if pushing to private registry -->
-					<!--
-                <auth>
-                    <username>${env.DOCKER_USERNAME}</username>
-                    <password>${env.DOCKER_PASSWORD}</password>
-                </auth>
-                -->
->>>>>>> Stashed changes
 				</configuration>
 			</plugin>
 		</plugins>

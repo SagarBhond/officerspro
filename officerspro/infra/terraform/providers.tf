@@ -60,4 +60,81 @@ locals {
     profile              = { database = "officersproprofile", username = "profile_service" }
     subscription-payment = { database = "subscription_payment_db", username = "subscription_payment_service" }
   }
+
+  microservices = {
+    "admin-backend" = {
+      port        = 8081
+      database    = "admin"
+      priority    = 20
+      paths       = ["/api/admin/users*", "/api/admin/plans*", "/api/admin/entitlements*", "/api/public/plans*", "/api/admin/login*"]
+      health_path = "/actuator/health"
+    }
+    "audit-service" = {
+      port        = 8086
+      database    = "audit"
+      priority    = 21
+      paths       = ["/api/requests*", "/api/audit*"]
+      health_path = "/"
+    }
+    "chargesheet-generator-service" = {
+      port        = 8095
+      database    = "chargesheet"
+      priority    = 22
+      paths       = ["/chargesheet*", "/ferrist*"]
+      health_path = "/actuator/health"
+    }
+    "court-case-management-service" = {
+      port        = 8080
+      database    = "court-case"
+      priority    = 23
+      paths       = ["/courtcases*", "/summon*", "/judgement*", "/integration/chargesheets*", "/mock-court-api*"]
+      health_path = "/actuator/health"
+    }
+    "dashboard-service" = {
+      port        = 8080
+      database    = null
+      priority    = 24
+      paths       = ["/api/admin/*"]
+      health_path = "/actuator/health"
+    }
+    "document-management-service" = {
+      port        = 8080
+      database    = "document"
+      priority    = 25
+      paths       = ["/api/documents*"]
+      health_path = "/actuator/health"
+    }
+    "help-support-feedback-service" = {
+      port        = 8080
+      database    = "help-support"
+      priority    = 26
+      paths       = ["/api/helpandsupport*"]
+      health_path = "/actuator/health"
+    }
+    "investigation-service" = {
+      port        = 8080
+      database    = "investigation"
+      priority    = 27
+      paths       = ["/api/casediary*", "/api/evidence*", "/api/witnesses*", "/api/investigation*"]
+      health_path = "/"
+    }
+    "profile-service" = {
+      port        = 8080
+      database    = "profile"
+      priority    = 28
+      paths       = ["/api/profile*", "/internal/officers*"]
+      health_path = "/actuator/health"
+    }
+    "subscription-payment-service" = {
+      port        = 8080
+      database    = "subscription-payment"
+      priority    = 29
+      paths       = ["/api/payments*", "/api/payment-history*", "/api/subscriptions*"]
+      health_path = "/actuator/health"
+    }
+  }
+
+  microservice_ports = toset([
+    for service in values(local.microservices) : service.port
+  ])
 }

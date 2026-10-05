@@ -1,6 +1,6 @@
 # OfficersPro database and deployment
 
-This checkout contains separate applications and Git submodules. The infrastructure provisions the primary backend, a frontend EC2 host, and one MySQL RDS instance with separate schemas and users for each database-backed service found in the checked-in source/configuration. It does not make missing service source runnable: `profile-service`, `subscription-payment-service`, and `notification-center-service` do not contain usable application builds here, and the Config Server Git submodule is empty. The frontend also calls APIs belonging to services beyond the primary backend.
+This checkout contains separate applications and Git submodules. The Terraform configuration provisions the primary backend, Keycloak, a frontend EC2 host, and the runnable backend services listed below as separate ECR repositories and ECS services. ALB path rules route each API to its service, and ECS Service Connect provides private service-to-service names. The frontend repository is deployed separately. Mock servers and the optional API gateway/config/discovery infrastructure are not included in the production ECS service set.
 
 ## Database inventory
 
@@ -61,7 +61,7 @@ export TF_VAR_app_runtime_secret_arn=arn:aws:secretsmanager:ap-south-1:123456789
 DEPLOY_AWS=yes ./scripts/deploy-aws.sh
 ```
 
-The guarded script creates ECR, pushes the initial backend image, provisions the RDS/SSM hosts with the backend stopped, initializes schemas/users over SSM, then starts the backend. The frontend GitHub workflow builds and runs the initial frontend image after `FRONTEND_EC2_INSTANCE_ID` and its OIDC role secret have been set. Inspect AWS costs and Terraform's plan/state protection before applying; configure encrypted remote Terraform state before a shared or production deployment.
+The guarded script creates the service ECR repositories, builds/pushes all backend images, provisions the RDS/SSM hosts with application services stopped, initializes schemas/users over SSM, then starts the backend, Keycloak, and backend microservices. The frontend GitHub workflow builds and runs the frontend image after `FRONTEND_EC2_INSTANCE_ID` and its OIDC role secret have been set. Inspect AWS costs and Terraform's plan/state protection before applying; configure encrypted remote Terraform state before a shared or production deployment.
 
 RDS is private, encrypted, has backups enabled, and is protected from deletion by default. Production usernames/passwords are random and separate from `root/localroot`. The database bootstrap script is at `infra/database/init-rds-databases.sh`. The RDS master secret ARN and per-service secret ARNs are Terraform outputs. Re-running the script preserves existing service passwords and repairs schema grants; rotate a service password by rotating/updating its Secrets Manager secret and restarting that service.
 
@@ -71,7 +71,7 @@ Set `certificate_arn` and narrow `allowed_web_cidrs` for production. Without an 
 
 ### Primary backend repository
 
-The workflow at the project root, `.github/workflows/deploy.yml`, tests and deploys the backend to ECS. It stays at the project root because GitHub Actions only discovers workflows in the root `.github/workflows` directory. Set:
+The workflow at the project root, `.github/workflows/deploy.yml`, tests the primary backend and complaint/FIR service, builds separate ECR images for the backend service set, and updates ECS services that Terraform has already created. It stays at the project root because GitHub Actions only discovers workflows in the root `.github/workflows` directory. Set:
 
 | GitHub setting | Value |
 | --- | --- |
@@ -79,6 +79,25 @@ The workflow at the project root, `.github/workflows/deploy.yml`, tests and depl
 | Secret `SUBMODULES_READ_TOKEN` | Fine-grained token with read-only Contents access to private submodules required by checkout. |
 | Variable `AWS_REGION` | Terraform AWS region, such as `ap-south-1`. |
 | Variable `ECS_CLUSTER` | `officerspro` (or Terraform output `ecs_cluster_name`). |
+
+#### Deploying the backend microservices
+
+The production ECS service set comprises `admin-backend` (8081), `audit-service` (8086), `chargesheet-generator-service` (8095), `complaint-fir` (8080), `court-case-management-service` (8080), `dashboard-service` (8080), `document-management-service` (8080), `help-support-feedback-service` (8080), `investigation-service` (8080), `profile-service` (8080), and `subscription-payment-service` (8080). These are the **container** ports from the service configurations. The local Compose host mappings (such as `8087:8080` for complaint/FIR) are for local development; AWS accepts public HTTP(S) only through the ALB.
+
+Provision ECR repositories and the GitHub deploy policy before the first image push. From the repository root, review and apply these targeted plans:
+
+```bash
+terraform -chdir=officerspro/infra/terraform plan \
+  -target=aws_ecr_repository.microservices \
+  -target=aws_iam_role_policy.github_deploy
+terraform -chdir=officerspro/infra/terraform apply \
+  -target=aws_ecr_repository.microservices \
+  -target=aws_iam_role_policy.github_deploy
+```
+
+Then push the backend repository's `main` branch. The workflow calls `officerspro/scripts/publish-all-services.sh`, which builds and pushes a commit-tagged and `latest` image for every listed backend service, the primary backend, complaint/FIR, and Keycloak. After the workflow succeeds, review the full Terraform plan and apply it to create the ECS task definitions, services, Service Connect namespace, and ALB routing. Do not apply unrelated local Terraform changes without reviewing the plan.
+
+Subscription payment and mail credentials are not stored in the application configuration. If those integrations are needed, create a JSON Secrets Manager secret and pass its ARN as `subscription_payment_secret_arn`; the expected JSON keys are `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_WEBHOOK_SECRET`, `SPRING_MAIL_USERNAME`, and `SPRING_MAIL_PASSWORD`. Without that secret, the service can start, but payment and email operations are not configured. Rotate any provider or mail credentials that were previously committed in application configuration.
 
 ### Standalone frontend repository (`Config-Server-LLP/officer-pro-frontend`)
 
@@ -96,6 +115,6 @@ The frontend OIDC role can push only to its ECR repo and send an SSM command onl
 
 ## Remaining integration and checks
 
-Local Compose and RDS now provide separate schemas, but central Config Server files and the service-specific Compose overrides still contain conflicting schema/user defaults. Update each service's `SPRING_DATASOURCE_URL`, username and password secret together before deploying that microservice; doing so changes actual runtime configuration and requires checking each service's expected migration/schema. The missing/empty submodules listed above also prevent validation of a complete application deployment.
+The Terraform ECS definitions explicitly set the service ports, RDS schema/user, and Secrets Manager password for each database-backed service; dashboard has no database. ECS disables the optional local Config Server/Eureka clients and uses Service Connect aliases for configured inter-service URLs. Auth and other optional integrations still require their external configuration, and the subscription service requires the provider secret described above before payment processing can work.
 
 Changes inside `officer-pro-frontend` and `officers-pro` are changes to separate repositories nested in this checkout. Commit/push each nested repository's files first, then update the parent Git submodule pointer. Inspect the status of each repository before pushing; other submodules may already have local work.

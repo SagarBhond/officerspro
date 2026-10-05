@@ -7,7 +7,7 @@ spring:
 
   cloud:
     config:
-      fail-fast: true
+      fail-fast: false
       retry:
         initial-interval: 1000
         max-attempts: 6
@@ -15,6 +15,13 @@ spring:
         multiplier: 1.1
     compatibility-verifier:
       enabled: false
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8080/realms/OfficerPro}
+          jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:http://localhost:8080/realms/OfficerPro/protocol/openid-connect/certs}
 
 auth:
   service:

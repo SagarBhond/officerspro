@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "officerspro/Officers-pro-backend/officers-pro/**"
+      - "officerspro/Officers-pro-backend/**"
       - "officerspro/infra/terraform/**"
       - "officerspro/infra/database/**"
       - "officerspro/infra/keycloak/**"
@@ -22,8 +22,48 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  test-complaint-fir:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: complaintFIR
+          MYSQL_USER: complaint_fir_test
+          MYSQL_PASSWORD: complaint_fir_test_password
+          MYSQL_ROOT_PASSWORD: complaint_fir_test_root_password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    steps:
+      - name: Check out complaint/FIR service
+        uses: actions/checkout@v4
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+      - name: Test complaint and FIR service
+        working-directory: officerspro/Officers-pro-backend/complaint-fir-service
+        env:
+          SPRING_CONFIG_IMPORT: optional:configserver:http://localhost:8888
+          SPRING_CLOUD_CONFIG_FAIL_FAST: "false"
+          SPRING_DATASOURCE_URL: jdbc:mysql://127.0.0.1:3306/complaintFIR?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+          SPRING_DATASOURCE_USERNAME: complaint_fir_test
+          SPRING_DATASOURCE_PASSWORD: complaint_fir_test_password
+          SPRING_JPA_HIBERNATE_DDL_AUTO: update
+          EUREKA_CLIENT_REGISTER_WITH_EUREKA: "false"
+          EUREKA_CLIENT_FETCH_REGISTRY: "false"
+        run: mvn --batch-mode --no-transfer-progress test
+
   build-and-deploy:
     runs-on: ubuntu-latest
+    needs: test-complaint-fir
     steps:
       - name: Check out application and submodules
         uses: actions/checkout@v4
@@ -52,25 +92,14 @@ jobs:
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build and publish backend image
-        uses: docker/build-push-action@v6
-        with:
-          context: officerspro/Officers-pro-backend/officers-pro/officers-pro-backend
-          file: officerspro/Officers-pro-backend/officers-pro/officers-pro-backend/dockerfile
-          push: true
-          tags: |
-            ${{ steps.ecr-login.outputs.registry }}/officerspro/backend:${{ github.sha }}
-            ${{ steps.ecr-login.outputs.registry }}/officerspro/backend:latest
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      - name: Build and publish Keycloak image
-        uses: docker/build-push-action@v6
-        with:
-          context: officerspro
-          file: officerspro/infra/keycloak/Dockerfile
-          push: true
-          tags: |
-            ${{ steps.ecr-login.outputs.registry }}/officerspro/keycloak:${{ github.sha }}
-            ${{ steps.ecr-login.outputs.registry }}/officerspro/keycloak:latest
+      - name: Build and publish all backend service images
+        env:
+          AWS_REGION: ${{ vars.AWS_REGION || 'ap-south-1' }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: bash officerspro/scripts/publish-all-services.sh
 
       - name: Deploy backend to ECS
         env:
@@ -78,14 +107,36 @@ jobs:
           ECS_CLUSTER: ${{ vars.ECS_CLUSTER || 'officerspro' }}
         run: |
           set -euo pipefail
-          aws ecs update-service \
-            --region "$AWS_REGION" \
-            --cluster "$ECS_CLUSTER" \
-            --service officerspro-backend \
-            --force-new-deployment
-          aws ecs update-service \
-            --region "$AWS_REGION" \
-            --cluster "$ECS_CLUSTER" \
-            --service officerspro-keycloak \
-            --desired-count 1 \
-            --force-new-deployment
+          services=(
+            officerspro-backend
+            officerspro-keycloak
+            officerspro-complaint-fir
+            officerspro-admin-backend
+            officerspro-audit-service
+            officerspro-chargesheet-generator-service
+            officerspro-court-case-management-service
+            officerspro-dashboard-service
+            officerspro-document-management-service
+            officerspro-help-support-feedback-service
+            officerspro-investigation-service
+            officerspro-profile-service
+            officerspro-subscription-payment-service
+          )
+          for service in "${services[@]}"; do
+            service_status="$(aws ecs describe-services \
+              --region "$AWS_REGION" \
+              --cluster "$ECS_CLUSTER" \
+              --services "$service" \
+              --query 'services[0].status' \
+              --output text)"
+            if [[ "$service_status" == "ACTIVE" ]]; then
+              aws ecs update-service \
+                --region "$AWS_REGION" \
+                --cluster "$ECS_CLUSTER" \
+                --service "$service" \
+                --desired-count 1 \
+                --force-new-deployment
+            else
+              echo "$service is not provisioned yet; apply Terraform to create it."
+            fi
+          done

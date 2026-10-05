@@ -79,6 +79,36 @@ resource "aws_security_group" "tasks" {
     security_groups = [aws_security_group.alb.id]
   }
 
+  dynamic "ingress" {
+    for_each = local.microservice_ports
+    content {
+      from_port       = ingress.value
+      to_port         = ingress.value
+      protocol        = "tcp"
+      security_groups = [aws_security_group.alb.id]
+      description     = "ALB access to ${ingress.value}"
+    }
+  }
+
+  ingress {
+    from_port   = 20000
+    to_port     = 30000
+    protocol    = "tcp"
+    self        = true
+    description = "ECS Service Connect proxy traffic between tasks"
+  }
+
+  dynamic "ingress" {
+    for_each = local.microservice_ports
+    content {
+      from_port   = ingress.value
+      to_port     = ingress.value
+      protocol    = "tcp"
+      self        = true
+      description = "Service-to-service access on ${ingress.value}"
+    }
+  }
+
   egress {
     from_port   = 0
     to_port     = 0

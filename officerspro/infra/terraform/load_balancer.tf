@@ -43,6 +43,39 @@ resource "aws_lb_target_group" "backend" {
   }
 }
 
+resource "aws_lb_target_group" "complaint_fir" {
+  name        = "officerspro-complaint-fir"
+  port        = 8080
+  protocol    = "HTTP"
+  vpc_id      = aws_vpc.main.id
+  target_type = "ip"
+
+  health_check {
+    path                = "/api/victim/test"
+    matcher             = "200"
+    interval            = 30
+    healthy_threshold   = 2
+    unhealthy_threshold = 3
+  }
+}
+
+resource "aws_lb_target_group" "microservices" {
+  for_each    = local.microservices
+  name        = "op-${substr(each.key, 0, 29)}"
+  port        = each.value.port
+  protocol    = "HTTP"
+  vpc_id      = aws_vpc.main.id
+  target_type = "ip"
+
+  health_check {
+    path                = each.value.health_path
+    matcher             = "200-499"
+    interval            = 30
+    healthy_threshold   = 2
+    unhealthy_threshold = 3
+  }
+}
+
 resource "aws_lb_target_group" "keycloak" {
   name        = "officerspro-keycloak"
   port        = 8080
@@ -101,7 +134,7 @@ resource "aws_lb_listener" "https" {
 
 resource "aws_lb_listener_rule" "backend" {
   listener_arn = var.certificate_arn == "" ? aws_lb_listener.http.arn : aws_lb_listener.https[0].arn
-  priority     = 10
+  priority     = 100
 
   action {
     type             = "forward"
@@ -111,6 +144,39 @@ resource "aws_lb_listener_rule" "backend" {
   condition {
     path_pattern {
       values = ["/api/*", "/swagger-ui/*", "/v3/api-docs/*"]
+    }
+  }
+}
+
+resource "aws_lb_listener_rule" "complaint_fir" {
+  listener_arn = var.certificate_arn == "" ? aws_lb_listener.http.arn : aws_lb_listener.https[0].arn
+  priority     = 9
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.complaint_fir.arn
+  }
+
+  condition {
+    path_pattern {
+      values = ["/api/victim", "/api/victim/*"]
+    }
+  }
+}
+
+resource "aws_lb_listener_rule" "microservices" {
+  for_each     = local.microservices
+  listener_arn = var.certificate_arn == "" ? aws_lb_listener.http.arn : aws_lb_listener.https[0].arn
+  priority     = each.value.priority
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.microservices[each.key].arn
+  }
+
+  condition {
+    path_pattern {
+      values = each.value.paths
     }
   }
 }

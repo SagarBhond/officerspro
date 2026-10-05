@@ -3,7 +3,6 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TF_DIR="$ROOT_DIR/infra/terraform"
-BACKEND_DIR="$ROOT_DIR/Officers-pro-backend/officers-pro/officers-pro-backend"
 AWS_REGION="${AWS_REGION:-ap-south-1}"
 
 if [[ "${DEPLOY_AWS:-}" != "yes" ]]; then
@@ -26,26 +25,25 @@ terraform -chdir="$TF_DIR" validate
 terraform -chdir="$TF_DIR" apply \
   -target=aws_ecr_repository.backend \
   -target=aws_ecr_repository.frontend \
+  -target=aws_ecr_repository.keycloak \
+  -target=aws_ecr_repository.complaint_fir \
+  -target=aws_ecr_repository.microservices \
+  -target=aws_iam_role_policy.github_deploy \
   -var="aws_region=$AWS_REGION" \
   -var="s3_bucket_name=$TF_VAR_s3_bucket_name" \
   -var="app_runtime_secret_arn=$TF_VAR_app_runtime_secret_arn" \
   -auto-approve
 
-account_id="$(aws sts get-caller-identity --query Account --output text)"
-registry="${account_id}.dkr.ecr.${AWS_REGION}.amazonaws.com"
-aws ecr get-login-password --region "$AWS_REGION" |
-  docker login --username AWS --password-stdin "$registry"
+AWS_REGION="$AWS_REGION" bash "$ROOT_DIR/scripts/publish-all-services.sh"
 
-docker build -t "$registry/officerspro/backend:latest" \
-  -f "$BACKEND_DIR/dockerfile" "$BACKEND_DIR"
-docker push "$registry/officerspro/backend:latest"
-
-# Create RDS and EC2 infrastructure while keeping the backend task count at zero.
+# Create the network and database before starting any application tasks.
 terraform -chdir="$TF_DIR" apply \
   -var="aws_region=$AWS_REGION" \
   -var="s3_bucket_name=$TF_VAR_s3_bucket_name" \
   -var="app_runtime_secret_arn=$TF_VAR_app_runtime_secret_arn" \
   -var="backend_desired_count=0" \
+  -var="microservices_desired_count=0" \
+  -var="keycloak_desired_count=0" \
   -auto-approve
 
 database_bootstrap_instance_id="$(terraform -chdir="$TF_DIR" output -raw database_bootstrap_instance_id)"
@@ -100,6 +98,8 @@ terraform -chdir="$TF_DIR" apply \
   -var="s3_bucket_name=$TF_VAR_s3_bucket_name" \
   -var="app_runtime_secret_arn=$TF_VAR_app_runtime_secret_arn" \
   -var="backend_desired_count=1" \
+  -var="microservices_desired_count=1" \
+  -var="keycloak_desired_count=1" \
   -auto-approve
 
-printf 'Infrastructure and databases are ready. Configure the GitHub OIDC roles and frontend instance variable before pushing.\n'
+printf 'All backend images, ECS services, and databases are ready. Configure the frontend OIDC role and instance variable before deploying the frontend.\n'

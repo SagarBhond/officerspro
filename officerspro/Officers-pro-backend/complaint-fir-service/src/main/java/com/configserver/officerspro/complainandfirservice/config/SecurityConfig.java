@@ -12,13 +12,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // disable CSRF for testing POST/multipart
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/**").permitAll() // allow all /api/* endpoints
-                        .requestMatchers("/**").permitAll() // allow everything for development
-                        .anyRequest().authenticated()          // protect other endpoints
+                        .requestMatchers("/api/victim/test").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .anyRequest().authenticated()
                 )
-                .cors(Customizer.withDefaults());
+                .cors(Customizer.withDefaults())
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
 
         return http.build();
     }

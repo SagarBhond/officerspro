@@ -10,6 +10,8 @@ services:
       SERVER_PORT: "8080"
       SPRING_CONFIG_IMPORT: "optional:configserver:http://host.docker.internal:8888"
       SPRING_CLOUD_CONFIG_FAIL_FAST: "false"
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: "${KEYCLOAK_ISSUER_URI:?Set KEYCLOAK_ISSUER_URI}"
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: "${KEYCLOAK_JWK_SET_URI:?Set KEYCLOAK_JWK_SET_URI}"
       EUREKA_CLIENT_REGISTER_WITH_EUREKA: "false"
       EUREKA_CLIENT_FETCH_REGISTRY: "false"
       SPRING_DATASOURCE_URL: "jdbc:mysql://db:3306/complaintFIR?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC"

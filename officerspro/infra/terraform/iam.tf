@@ -23,12 +23,11 @@ resource "aws_iam_role_policy" "task_secrets" {
     Statement = [{
       Effect = "Allow"
       Action = ["secretsmanager:GetSecretValue"]
-      Resource = [
-        var.app_runtime_secret_arn,
-        aws_secretsmanager_secret.database_users["officers-pro"].arn,
-        aws_secretsmanager_secret.database_users["keycloak"].arn,
-        aws_secretsmanager_secret.keycloak_admin.arn
-      ]
+      Resource = concat(
+        [var.app_runtime_secret_arn, aws_secretsmanager_secret.keycloak_admin.arn],
+        [for secret in values(aws_secretsmanager_secret.database_users) : secret.arn],
+        var.subscription_payment_secret_arn == "" ? [] : [var.subscription_payment_secret_arn]
+      )
     }]
   })
 }
@@ -111,6 +110,7 @@ resource "aws_iam_role_policy" "github_deploy" {
       {
         Effect = "Allow"
         Action = [
+          "ecr:DescribeRepositories",
           "ecr:BatchCheckLayerAvailability",
           "ecr:BatchGetImage",
           "ecr:CompleteLayerUpload",
@@ -119,18 +119,20 @@ resource "aws_iam_role_policy" "github_deploy" {
           "ecr:PutImage",
           "ecr:UploadLayerPart"
         ]
-        Resource = [
+        Resource = concat([
           aws_ecr_repository.backend.arn,
-          aws_ecr_repository.keycloak.arn
-        ]
+          aws_ecr_repository.keycloak.arn,
+          aws_ecr_repository.complaint_fir.arn
+        ], [for repository in values(aws_ecr_repository.microservices) : repository.arn])
       },
       {
         Effect = "Allow"
         Action = ["ecs:DescribeServices", "ecs:UpdateService"]
-        Resource = [
+        Resource = concat([
           "arn:aws:ecs:${var.aws_region}:${data.aws_caller_identity.current.account_id}:service/${aws_ecs_cluster.main.name}/officerspro-backend",
-          "arn:aws:ecs:${var.aws_region}:${data.aws_caller_identity.current.account_id}:service/${aws_ecs_cluster.main.name}/officerspro-keycloak"
-        ]
+          "arn:aws:ecs:${var.aws_region}:${data.aws_caller_identity.current.account_id}:service/${aws_ecs_cluster.main.name}/officerspro-keycloak",
+          "arn:aws:ecs:${var.aws_region}:${data.aws_caller_identity.current.account_id}:service/${aws_ecs_cluster.main.name}/officerspro-complaint-fir"
+        ], [for name in keys(local.microservices) : "arn:aws:ecs:${var.aws_region}:${data.aws_caller_identity.current.account_id}:service/${aws_ecs_cluster.main.name}/officerspro-${name}"])
       }
     ]
   })
