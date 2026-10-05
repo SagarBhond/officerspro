@@ -82,7 +82,13 @@ resource "aws_iam_role" "github_actions" {
       Condition = {
         StringEquals = {
           "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-          "token.actions.githubusercontent.com:sub" = "repo:${var.github_repository}:ref:refs/heads/main"
+          "token.actions.githubusercontent.com:sub" = format(
+            "repo:%s@%s/%s@%s:ref:refs/heads/main",
+            split("/", var.github_repository)[0],
+            var.github_owner_id,
+            split("/", var.github_repository)[1],
+            var.github_repository_id
+          )
         }
       }
     }]
@@ -104,7 +110,9 @@ resource "aws_iam_role_policy" "github_deploy" {
         Effect = "Allow"
         Action = [
           "ecr:BatchCheckLayerAvailability",
+          "ecr:BatchGetImage",
           "ecr:CompleteLayerUpload",
+          "ecr:GetDownloadUrlForLayer",
           "ecr:InitiateLayerUpload",
           "ecr:PutImage",
           "ecr:UploadLayerPart"
@@ -131,7 +139,13 @@ resource "aws_iam_role" "github_frontend" {
       Condition = {
         StringEquals = {
           "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-          "token.actions.githubusercontent.com:sub" = "repo:${var.frontend_github_repository}:ref:refs/heads/main"
+          "token.actions.githubusercontent.com:sub" = format(
+            "repo:%s@%s/%s@%s:ref:refs/heads/main",
+            split("/", var.frontend_github_repository)[0],
+            var.github_owner_id,
+            split("/", var.frontend_github_repository)[1],
+            var.frontend_github_repository_id
+          )
         }
       }
     }]

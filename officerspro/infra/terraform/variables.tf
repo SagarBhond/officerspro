@@ -10,10 +10,28 @@ variable "github_repository" {
   default     = "SagarBhond/officerspro"
 }
 
+variable "github_owner_id" {
+  description = "Immutable GitHub owner ID used in GitHub Actions OIDC subject claims."
+  type        = string
+  default     = "123446256"
+}
+
+variable "github_repository_id" {
+  description = "Immutable GitHub backend repository ID used in OIDC subject claims."
+  type        = string
+  default     = "1394778224"
+}
+
 variable "frontend_github_repository" {
   description = "GitHub repository that builds the frontend and deploys it to the frontend EC2 instance."
   type        = string
   default     = "SagarBhond/officer-pro-frontend"
+}
+
+variable "frontend_github_repository_id" {
+  description = "Immutable GitHub frontend repository ID used in OIDC subject claims."
+  type        = string
+  default     = "1394776617"
 }
 
 variable "vpc_cidr" {
