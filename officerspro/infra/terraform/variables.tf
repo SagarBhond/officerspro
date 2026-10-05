@@ -98,21 +98,21 @@ variable "s3_bucket_name" {
 }
 
 variable "keycloak_server_url" {
-  description = "Externally managed Keycloak base URL."
+  description = "Public Keycloak base URL."
   type        = string
-  default     = "https://dev-keycloak.officerspro.in/"
+  default     = "https://auth.sagarbhond.site/"
 }
 
 variable "keycloak_issuer_uri" {
-  description = "Externally managed Keycloak realm issuer URL."
+  description = "Public Keycloak realm issuer URL."
   type        = string
-  default     = "https://dev-keycloak.officerspro.in/realms/officers-pro"
+  default     = "https://auth.sagarbhond.site/realms/OfficerPro"
 }
 
 variable "keycloak_realm" {
   description = "Keycloak realm name."
   type        = string
-  default     = "officers-pro"
+  default     = "OfficerPro"
 }
 
 variable "certificate_arn" {
@@ -125,4 +125,21 @@ variable "application_domain" {
   description = "Public DNS name routed to the application load balancer."
   type        = string
   default     = "demo.sagarbhond.site"
+}
+
+variable "keycloak_domain" {
+  description = "Public hostname for the Keycloak service."
+  type        = string
+  default     = "auth.sagarbhond.site"
+}
+
+variable "keycloak_desired_count" {
+  description = "Number of Keycloak tasks. Use zero until the image and runtime secrets are ready."
+  type        = number
+  default     = 1
+
+  validation {
+    condition     = var.keycloak_desired_count >= 0
+    error_message = "keycloak_desired_count must be zero or greater."
+  }
 }

@@ -7,6 +7,8 @@ on:
       - "officerspro/Officers-pro-backend/officers-pro/**"
       - "officerspro/infra/terraform/**"
       - "officerspro/infra/database/**"
+      - "officerspro/infra/keycloak/**"
+      - "officerspro/Officerspro-Microservices-Infrastructure/**"
       - "officerspro/scripts/**"
       - ".github/workflows/deploy.yml"
   workflow_dispatch:
@@ -60,6 +62,16 @@ jobs:
             ${{ steps.ecr-login.outputs.registry }}/officerspro/backend:${{ github.sha }}
             ${{ steps.ecr-login.outputs.registry }}/officerspro/backend:latest
 
+      - name: Build and publish Keycloak image
+        uses: docker/build-push-action@v6
+        with:
+          context: officerspro/Officerspro-Microservices-Infrastructure/officerspro-keycloak
+          file: officerspro/infra/keycloak/Dockerfile
+          push: true
+          tags: |
+            ${{ steps.ecr-login.outputs.registry }}/officerspro/keycloak:${{ github.sha }}
+            ${{ steps.ecr-login.outputs.registry }}/officerspro/keycloak:latest
+
       - name: Deploy backend to ECS
         env:
           AWS_REGION: ${{ vars.AWS_REGION || 'ap-south-1' }}
@@ -70,4 +82,10 @@ jobs:
             --region "$AWS_REGION" \
             --cluster "$ECS_CLUSTER" \
             --service officerspro-backend \
+            --force-new-deployment
+          aws ecs update-service \
+            --region "$AWS_REGION" \
+            --cluster "$ECS_CLUSTER" \
+            --service officerspro-keycloak \
+            --desired-count 1 \
             --force-new-deployment

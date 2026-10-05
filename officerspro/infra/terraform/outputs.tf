@@ -3,6 +3,16 @@ output "application_url" {
   value       = var.certificate_arn == "" ? "http://${aws_lb.main.dns_name}" : "https://${var.application_domain}"
 }
 
+output "keycloak_url" {
+  description = "Public Keycloak issuer base URL."
+  value       = "https://${var.keycloak_domain}"
+}
+
+output "keycloak_admin_secret_arn" {
+  description = "Add an initial username and strong password to this Secrets Manager secret before starting Keycloak."
+  value       = aws_secretsmanager_secret.keycloak_admin.arn
+}
+
 output "load_balancer_dns_name" {
   description = "DNS name of the application load balancer."
   value       = aws_lb.main.dns_name

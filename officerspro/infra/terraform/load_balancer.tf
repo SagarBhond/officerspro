@@ -43,6 +43,22 @@ resource "aws_lb_target_group" "backend" {
   }
 }
 
+resource "aws_lb_target_group" "keycloak" {
+  name        = "officerspro-keycloak"
+  port        = 8080
+  protocol    = "HTTP"
+  vpc_id      = aws_vpc.main.id
+  target_type = "ip"
+
+  health_check {
+    path                = "/realms/${var.keycloak_realm}/.well-known/openid-configuration"
+    matcher             = "200"
+    interval            = 30
+    healthy_threshold   = 2
+    unhealthy_threshold = 3
+  }
+}
+
 resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.main.arn
   port              = 80
@@ -95,6 +111,22 @@ resource "aws_lb_listener_rule" "backend" {
   condition {
     path_pattern {
       values = ["/api/*", "/swagger-ui/*", "/v3/api-docs/*"]
+    }
+  }
+}
+
+resource "aws_lb_listener_rule" "keycloak" {
+  listener_arn = var.certificate_arn == "" ? aws_lb_listener.http.arn : aws_lb_listener.https[0].arn
+  priority     = 5
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.keycloak.arn
+  }
+
+  condition {
+    host_header {
+      values = [var.keycloak_domain]
     }
   }
 }

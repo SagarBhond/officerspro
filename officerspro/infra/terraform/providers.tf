@@ -40,6 +40,11 @@ data "aws_availability_zones" "available" {
   state = "available"
 }
 
+data "aws_route53_zone" "public" {
+  name         = "sagarbhond.site."
+  private_zone = false
+}
+
 locals {
   database_services = {
     admin                = { database = "admindb", username = "admin_service" }
@@ -50,6 +55,7 @@ locals {
     document             = { database = "officersprodocument", username = "document_service" }
     help-support         = { database = "helpandsupportfeedback", username = "help_support_service" }
     investigation        = { database = "investigationservice", username = "investigation_service" }
+    keycloak             = { database = "keycloak", username = "keycloak_service" }
     officers-pro         = { database = "officerspro", username = "officerspro" }
     profile              = { database = "officersproprofile", username = "profile_service" }
     subscription-payment = { database = "subscription_payment_db", username = "subscription_payment_service" }

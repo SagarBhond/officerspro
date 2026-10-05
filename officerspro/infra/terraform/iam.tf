@@ -25,7 +25,9 @@ resource "aws_iam_role_policy" "task_secrets" {
       Action = ["secretsmanager:GetSecretValue"]
       Resource = [
         var.app_runtime_secret_arn,
-        aws_secretsmanager_secret.database_users["officers-pro"].arn
+        aws_secretsmanager_secret.database_users["officers-pro"].arn,
+        aws_secretsmanager_secret.database_users["keycloak"].arn,
+        aws_secretsmanager_secret.keycloak_admin.arn
       ]
     }]
   })
@@ -117,12 +119,18 @@ resource "aws_iam_role_policy" "github_deploy" {
           "ecr:PutImage",
           "ecr:UploadLayerPart"
         ]
-        Resource = [aws_ecr_repository.backend.arn]
+        Resource = [
+          aws_ecr_repository.backend.arn,
+          aws_ecr_repository.keycloak.arn
+        ]
       },
       {
-        Effect   = "Allow"
-        Action   = ["ecs:DescribeServices", "ecs:UpdateService"]
-        Resource = ["arn:aws:ecs:${var.aws_region}:${data.aws_caller_identity.current.account_id}:service/${aws_ecs_cluster.main.name}/${aws_ecs_service.backend.name}"]
+        Effect = "Allow"
+        Action = ["ecs:DescribeServices", "ecs:UpdateService"]
+        Resource = [
+          "arn:aws:ecs:${var.aws_region}:${data.aws_caller_identity.current.account_id}:service/${aws_ecs_cluster.main.name}/${aws_ecs_service.backend.name}",
+          "arn:aws:ecs:${var.aws_region}:${data.aws_caller_identity.current.account_id}:service/${aws_ecs_cluster.main.name}/${aws_ecs_service.keycloak.name}"
+        ]
       }
     ]
   })

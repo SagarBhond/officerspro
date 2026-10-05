@@ -14,8 +14,20 @@ resource "aws_ecr_repository" "frontend" {
   }
 }
 
+resource "aws_ecr_repository" "keycloak" {
+  name                 = "officerspro/keycloak"
+  image_tag_mutability = "MUTABLE"
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+
 resource "aws_ecr_lifecycle_policy" "images" {
-  for_each   = { backend = aws_ecr_repository.backend.name, frontend = aws_ecr_repository.frontend.name }
+  for_each = {
+    backend  = aws_ecr_repository.backend.name
+    frontend = aws_ecr_repository.frontend.name
+    keycloak = aws_ecr_repository.keycloak.name
+  }
   repository = each.value
   policy = jsonencode({
     rules = [{

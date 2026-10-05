@@ -38,6 +38,7 @@ services=(
   "document:officersprodocument:document_service"
   "help-support:helpandsupportfeedback:help_support_service"
   "investigation:investigationservice:investigation_service"
+  "keycloak:keycloak:keycloak_service"
   "officers-pro:officerspro:officerspro"
   "profile:officersproprofile:profile_service"
   "subscription-payment:subscription_payment_db:subscription_payment_service"
