@@ -65,7 +65,7 @@ jobs:
       - name: Build and publish Keycloak image
         uses: docker/build-push-action@v6
         with:
-          context: officerspro/Officerspro-Microservices-Infrastructure/officerspro-keycloak
+          context: officerspro
           file: officerspro/infra/keycloak/Dockerfile
           push: true
           tags: |
