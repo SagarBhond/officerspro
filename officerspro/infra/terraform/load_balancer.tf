@@ -44,11 +44,15 @@ resource "aws_lb_target_group" "backend" {
 }
 
 resource "aws_lb_target_group" "complaint_fir" {
-  name        = "officerspro-complaint-fir"
+  name        = "officerspro-complaint-fir-v2"
   port        = 8080
   protocol    = "HTTP"
   vpc_id      = aws_vpc.main.id
   target_type = "ip"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 
   health_check {
     path                = "/api/victim/test"

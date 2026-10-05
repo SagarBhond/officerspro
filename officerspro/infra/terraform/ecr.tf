@@ -45,7 +45,7 @@ resource "aws_ecr_lifecycle_policy" "images" {
     frontend      = aws_ecr_repository.frontend.name
     keycloak      = aws_ecr_repository.keycloak.name
     complaint_fir = aws_ecr_repository.complaint_fir.name
-  }, { for key, repository in aws_ecr_repository.microservices : key => repository.name })
+  }, { for key in keys(local.microservices) : key => aws_ecr_repository.microservices[key].name })
   repository = each.value
   policy = jsonencode({
     rules = [{

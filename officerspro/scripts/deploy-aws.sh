@@ -13,15 +13,18 @@ if [[ -z "${TF_VAR_s3_bucket_name:-}" || -z "${TF_VAR_app_runtime_secret_arn:-}"
   printf 'Set TF_VAR_s3_bucket_name and TF_VAR_app_runtime_secret_arn before deploying.\n' >&2
   exit 2
 fi
+if [[ ! "$TF_VAR_app_runtime_secret_arn" =~ ^arn:aws(-[a-z]+)?:secretsmanager:[a-z0-9-]+:[0-9]{12}:secret:.+$ ]]; then
+  printf 'TF_VAR_app_runtime_secret_arn must be a Secrets Manager ARN; DEPLOY_AWS=yes is only the deployment confirmation flag.\n' >&2
+  exit 2
+fi
 
 command -v terraform >/dev/null || { printf 'terraform is required.\n' >&2; exit 1; }
 command -v aws >/dev/null || { printf 'AWS CLI is required.\n' >&2; exit 1; }
-command -v docker >/dev/null || { printf 'Docker is required.\n' >&2; exit 1; }
 
 terraform -chdir="$TF_DIR" init
 terraform -chdir="$TF_DIR" validate
 
-# Publish an initial image before ECS starts any tasks.
+# Provision ECR and the AWS-hosted builder before publishing images.
 terraform -chdir="$TF_DIR" apply \
   -target=aws_ecr_repository.backend \
   -target=aws_ecr_repository.frontend \
@@ -29,12 +32,14 @@ terraform -chdir="$TF_DIR" apply \
   -target=aws_ecr_repository.complaint_fir \
   -target=aws_ecr_repository.microservices \
   -target=aws_iam_role_policy.github_deploy \
+  -target=aws_codebuild_project.ecr_builder \
+  -target=aws_iam_role_policy.github_deploy_codebuild \
   -var="aws_region=$AWS_REGION" \
   -var="s3_bucket_name=$TF_VAR_s3_bucket_name" \
   -var="app_runtime_secret_arn=$TF_VAR_app_runtime_secret_arn" \
   -auto-approve
 
-AWS_REGION="$AWS_REGION" bash "$ROOT_DIR/scripts/publish-all-services.sh"
+AWS_REGION="$AWS_REGION" bash "$ROOT_DIR/scripts/publish-ecr-remote.sh"
 
 # Create the network and database before starting any application tasks.
 terraform -chdir="$TF_DIR" apply \

@@ -101,6 +101,11 @@ variable "database_deletion_protection" {
 variable "app_runtime_secret_arn" {
   description = "Secrets Manager secret ARN containing AES_ENCRYPTION_KEY and KEYCLOAK_CLIENT_SECRET JSON fields."
   type        = string
+
+  validation {
+    condition     = can(regex("^arn:aws(-[a-z]+)?:secretsmanager:[a-z0-9-]+:[0-9]{12}:secret:.+$", var.app_runtime_secret_arn))
+    error_message = "app_runtime_secret_arn must be a Secrets Manager ARN, not a password or confirmation flag."
+  }
 }
 
 variable "subscription_payment_secret_arn" {

@@ -53,7 +53,7 @@ MySQL binds only to `127.0.0.1:3306`; its data persists in a Docker volume. Conn
 
 `infra/terraform` creates encrypted private MySQL RDS with initial schema `officerspro`, a random AWS-managed master password, and empty per-service Secrets Manager entries. It also creates an SSM-only database-bootstrap EC2 host inside the VPC; that instance has no inbound ports and is the only host (besides backend ECS tasks) allowed to connect to RDS. The bootstrap script generates separate random per-service passwords and stores them in Secrets Manager. The app database accounts do **not** use the RDS administrator/master password.
 
-Before first deployment, create an AWS Secrets Manager JSON secret containing `AES_ENCRYPTION_KEY` (a newly generated 32-byte key) and `KEYCLOAK_CLIENT_SECRET`; verify that the S3 bucket and Keycloak client already exist. Run from the `officerspro` backend folder after AWS CLI credentials and Docker are configured:
+Before first deployment, create an AWS Secrets Manager JSON secret containing `AES_ENCRYPTION_KEY` (a newly generated 32-byte key) and `KEYCLOAK_CLIENT_SECRET`; verify that the S3 bucket and Keycloak client already exist. Run from the `officerspro` backend folder after AWS CLI credentials are configured. Docker Desktop is not required; images are built by AWS CodeBuild:
 
 ```bash
 export TF_VAR_s3_bucket_name=your-existing-bucket
@@ -61,7 +61,9 @@ export TF_VAR_app_runtime_secret_arn=arn:aws:secretsmanager:ap-south-1:123456789
 DEPLOY_AWS=yes ./scripts/deploy-aws.sh
 ```
 
-The guarded script creates the service ECR repositories, builds/pushes all backend images, provisions the RDS/SSM hosts with application services stopped, initializes schemas/users over SSM, then starts the backend, Keycloak, and backend microservices. The frontend GitHub workflow builds and runs the frontend image after `FRONTEND_EC2_INSTANCE_ID` and its OIDC role secret have been set. Inspect AWS costs and Terraform's plan/state protection before applying; configure encrypted remote Terraform state before a shared or production deployment.
+`DEPLOY_AWS=yes` is only the explicit deployment confirmation; it is not a value for either `TF_VAR_*` variable. `TF_VAR_app_runtime_secret_arn` must be the full ARN of the JSON Secrets Manager secret containing `AES_ENCRYPTION_KEY` and `KEYCLOAK_CLIENT_SECRET`. The deploy script rejects a non-ARN value before applying infrastructure.
+
+The guarded script creates the service ECR repositories and AWS CodeBuild image builder, packages source files without `.env` files, uploads the archive to the configured S3 bucket, and asks CodeBuild to build and push all backend images to ECR. It then provisions the RDS/SSM hosts with application services stopped, initializes schemas/users over SSM, and starts the backend, Keycloak, and backend microservices. The source archive is removed from S3 when the remote build finishes. The frontend GitHub workflow builds and runs the frontend image after `FRONTEND_EC2_INSTANCE_ID` and its OIDC role secret have been set. Inspect AWS costs and Terraform's plan/state protection before applying; configure encrypted remote Terraform state before a shared or production deployment.
 
 RDS is private, encrypted, has backups enabled, and is protected from deletion by default. Production usernames/passwords are random and separate from `root/localroot`. The database bootstrap script is at `infra/database/init-rds-databases.sh`. The RDS master secret ARN and per-service secret ARNs are Terraform outputs. Re-running the script preserves existing service passwords and repairs schema grants; rotate a service password by rotating/updating its Secrets Manager secret and restarting that service.
 
@@ -71,7 +73,7 @@ Set `certificate_arn` and narrow `allowed_web_cidrs` for production. Without an 
 
 ### Primary backend repository
 
-The workflow at the project root, `.github/workflows/deploy.yml`, tests the primary backend and complaint/FIR service, builds separate ECR images for the backend service set, and updates ECS services that Terraform has already created. It stays at the project root because GitHub Actions only discovers workflows in the root `.github/workflows` directory. Set:
+The workflow at the project root, `.github/workflows/deploy.yml`, tests the primary backend and complaint/FIR service, starts AWS CodeBuild to build separate ECR images for the backend service set, and updates ECS services that Terraform has already created. It stays at the project root because GitHub Actions only discovers workflows in the root `.github/workflows` directory. Set:
 
 | GitHub setting | Value |
 | --- | --- |
@@ -79,23 +81,30 @@ The workflow at the project root, `.github/workflows/deploy.yml`, tests the prim
 | Secret `SUBMODULES_READ_TOKEN` | Fine-grained token with read-only Contents access to private submodules required by checkout. |
 | Variable `AWS_REGION` | Terraform AWS region, such as `ap-south-1`. |
 | Variable `ECS_CLUSTER` | `officerspro` (or Terraform output `ecs_cluster_name`). |
+| Variable `S3_BUCKET_NAME` | Existing S3 bucket used for short-lived CodeBuild source archives, such as `sagar0010`. |
 
 #### Deploying the backend microservices
 
 The production ECS service set comprises `admin-backend` (8081), `audit-service` (8086), `chargesheet-generator-service` (8095), `complaint-fir` (8080), `court-case-management-service` (8080), `dashboard-service` (8080), `document-management-service` (8080), `help-support-feedback-service` (8080), `investigation-service` (8080), `profile-service` (8080), and `subscription-payment-service` (8080). These are the **container** ports from the service configurations. The local Compose host mappings (such as `8087:8080` for complaint/FIR) are for local development; AWS accepts public HTTP(S) only through the ALB.
 
-Provision ECR repositories and the GitHub deploy policy before the first image push. From the repository root, review and apply these targeted plans:
+Provision ECR repositories and the AWS CodeBuild image builder before the first image push. From the repository root, review and apply these targeted plans:
 
 ```bash
 terraform -chdir=officerspro/infra/terraform plan \
   -target=aws_ecr_repository.microservices \
-  -target=aws_iam_role_policy.github_deploy
+  -target=aws_iam_role_policy.github_deploy \
+  -target=aws_codebuild_project.ecr_builder \
+  -target=aws_iam_role_policy.github_deploy_codebuild
 terraform -chdir=officerspro/infra/terraform apply \
   -target=aws_ecr_repository.microservices \
-  -target=aws_iam_role_policy.github_deploy
+  -target=aws_iam_role_policy.github_deploy \
+  -target=aws_codebuild_project.ecr_builder \
+  -target=aws_iam_role_policy.github_deploy_codebuild
 ```
 
-Then push the backend repository's `main` branch. The workflow calls `officerspro/scripts/publish-all-services.sh`, which builds and pushes a commit-tagged and `latest` image for every listed backend service, the primary backend, complaint/FIR, and Keycloak. After the workflow succeeds, review the full Terraform plan and apply it to create the ECS task definitions, services, Service Connect namespace, and ALB routing. Do not apply unrelated local Terraform changes without reviewing the plan.
+No local Docker engine is needed. To publish from a checked-out working tree, set `TF_VAR_s3_bucket_name` and `DEPLOY_AWS=yes`, then run `bash officerspro/scripts/publish-ecr-remote.sh`; it packages the source and starts the `officerspro-ecr-image-builder` CodeBuild project. Alternatively, push the backend repository's `main` branch after setting the GitHub `S3_BUCKET_NAME` variable. The workflow calls the same remote-build script. CodeBuild builds and pushes a commit-tagged and `latest` image for every listed backend service, the primary backend, complaint/FIR, and Keycloak. After the images are published, review the full Terraform plan and apply it to create the ECS task definitions, services, Service Connect namespace, and ALB routing. Do not apply unrelated local Terraform changes without reviewing the plan.
+
+CodeBuild also requires the AWS account's `Concurrently running builds for Linux/Medium environment` quota in `ap-south-1` to be at least 1. The publisher checks this before uploading the source and prints the Service Quotas request command if AWS reports a zero quota. Wait for AWS to approve the request before retrying the build; Terraform cannot change this account quota.
 
 Subscription payment and mail credentials are not stored in the application configuration. If those integrations are needed, create a JSON Secrets Manager secret and pass its ARN as `subscription_payment_secret_arn`; the expected JSON keys are `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_WEBHOOK_SECRET`, `SPRING_MAIL_USERNAME`, and `SPRING_MAIL_PASSWORD`. Without that secret, the service can start, but payment and email operations are not configured. Rotate any provider or mail credentials that were previously committed in application configuration.
 

@@ -15,6 +15,89 @@ resource "aws_iam_role_policy_attachment" "task_execution" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
+resource "aws_iam_role" "codebuild_ecr" {
+  name = "officerspro-ecr-codebuild"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect    = "Allow"
+      Action    = "sts:AssumeRole"
+      Principal = { Service = "codebuild.amazonaws.com" }
+    }]
+  })
+}
+
+resource "aws_iam_role_policy" "codebuild_ecr" {
+  name = "officerspro-ecr-codebuild"
+  role = aws_iam_role.codebuild_ecr.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = ["logs:CreateLogStream", "logs:PutLogEvents"]
+        Resource = "${aws_cloudwatch_log_group.codebuild_ecr.arn}:*"
+      },
+      {
+        Effect   = "Allow"
+        Action   = ["s3:GetBucketLocation"]
+        Resource = "arn:aws:s3:::${var.s3_bucket_name}"
+      },
+      {
+        Effect   = "Allow"
+        Action   = ["s3:GetObject", "s3:GetObjectVersion"]
+        Resource = "arn:aws:s3:::${var.s3_bucket_name}/officerspro/codebuild/*"
+      },
+      {
+        Effect   = "Allow"
+        Action   = ["ecr:GetAuthorizationToken"]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:CompleteLayerUpload",
+          "ecr:DescribeRepositories",
+          "ecr:InitiateLayerUpload",
+          "ecr:PutImage",
+          "ecr:UploadLayerPart"
+        ]
+        Resource = concat([
+          aws_ecr_repository.backend.arn,
+          aws_ecr_repository.keycloak.arn,
+          aws_ecr_repository.complaint_fir.arn
+        ], [for repository in values(aws_ecr_repository.microservices) : repository.arn])
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "github_deploy_codebuild" {
+  name = "officerspro-start-ecr-codebuild"
+  role = aws_iam_role.github_actions.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = ["codebuild:StartBuild", "codebuild:BatchGetBuilds", "codebuild:BatchGetProjects"]
+        Resource = aws_codebuild_project.ecr_builder.arn
+      },
+      {
+        Effect   = "Allow"
+        Action   = ["servicequotas:GetServiceQuota"]
+        Resource = "*"
+      },
+      {
+        Effect   = "Allow"
+        Action   = ["s3:PutObject", "s3:DeleteObject"]
+        Resource = "arn:aws:s3:::${var.s3_bucket_name}/officerspro/codebuild/*"
+      }
+    ]
+  })
+}
+
 resource "aws_iam_role_policy" "task_secrets" {
   name = "officerspro-read-runtime-secrets"
   role = aws_iam_role.task_execution.id
