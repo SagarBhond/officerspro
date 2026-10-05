@@ -13,7 +13,7 @@ variable "github_repository" {
 variable "frontend_github_repository" {
   description = "GitHub repository that builds the frontend and deploys it to the frontend EC2 instance."
   type        = string
-  default     = "Config-Server-LLP/officer-pro-frontend"
+  default     = "SagarBhond/officer-pro-frontend"
 }
 
 variable "vpc_cidr" {
