@@ -116,7 +116,13 @@ variable "keycloak_realm" {
 }
 
 variable "certificate_arn" {
-  description = "Optional ACM certificate ARN for HTTPS. Without it, the ALB serves HTTP."
+  description = "ACM certificate ARN for HTTPS on demo.sagarbhond.site."
   type        = string
-  default     = ""
+  default     = "arn:aws:acm:ap-south-1:882040517001:certificate/7c86f363-09d3-4d58-b645-c41bd7287298"
+}
+
+variable "application_domain" {
+  description = "Public DNS name routed to the application load balancer."
+  type        = string
+  default     = "demo.sagarbhond.site"
 }

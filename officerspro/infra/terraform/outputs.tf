@@ -1,6 +1,6 @@
 output "application_url" {
   description = "Frontend URL. Configure an ACM certificate to enable HTTPS."
-  value       = "${var.certificate_arn == "" ? "http" : "https"}://${aws_lb.main.dns_name}"
+  value       = var.certificate_arn == "" ? "http://${aws_lb.main.dns_name}" : "https://${var.application_domain}"
 }
 
 output "load_balancer_dns_name" {
